@@ -1,21 +1,14 @@
-﻿using ReactiveInjection.Abstractions;
-using ReactiveInjection.Tests.Setup.Models;
+﻿using ReactiveInjection.Tests.Setup.Models;
 using ReactiveInjection.Tests.Setup.Services;
 
 namespace ReactiveInjection.Tests.Setup.ViewModels;
 
 public class ChildViewModel
 {
-    public IObservable<ApiUrl> SharedState { get; }
-    public ChildModel Model { get; }
-    public ApiClient ApiClient { get; }
-
-    public ChildViewModel(IObservable<ApiUrl> sharedState,
+    public ChildViewModel(SharedState sharedState,
         ChildModel model,
-        [FromDI] ApiClient apiClient)
+        [FromDI] Service service,
+        [FromDI] List<int> values)
     {
-        SharedState = sharedState;
-        Model = model;
-        ApiClient = apiClient;
     }
 }

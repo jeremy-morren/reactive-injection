@@ -1,5 +1,4 @@
-﻿using ReactiveInjection.Abstractions;
-using ReactiveInjection.Tests.Setup.ViewModels;
+﻿using ReactiveInjection.Tests.Setup.ViewModels;
 
 namespace ReactiveInjection.Tests;
 

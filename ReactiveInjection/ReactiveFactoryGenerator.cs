@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using ReactiveInjection.Abstractions;
-using ReactiveInjection.Reflection;
+using ReactiveInjection.Tokens;
 
 namespace ReactiveInjection;
 
@@ -13,8 +13,8 @@ public class ReactiveFactoryGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var returnKinds = context.SyntaxProvider.CreateSyntaxProvider(
-            static (n, _) => n is MethodDeclarationSyntax,
-            static (n, _) => (IMethodSymbol)n.SemanticModel.GetDeclaredSymbol(n.Node)!);
+            static (n, _) => n is TypeDeclarationSyntax,
+            static (n, _) => (ITypeSymbol)n.SemanticModel.GetDeclaredSymbol(n.Node)!);
 
         var transformed = returnKinds.Select(static (m, ct) =>
         {
@@ -57,30 +57,4 @@ public class ReactiveFactoryGenerator : IIncrementalGenerator
 
         return $"[ {string.Join(", ", values)} ]";
     }
-    
-    private static IType ToType(ITypeSymbol type)
-    {
-        var tiType = new IType()
-        {
-            Namespace = type.ContainingNamespace.Name,
-            Name = type.Name,
-            ContainingType = type.ContainingType != null ? ToType(type.ContainingType) : null,
-            IsValueType = type.IsValueType,
-            IsAbstract = type.IsAbstract,
-            IsNullableReferenceType = type.NullableAnnotation == NullableAnnotation.Annotated,
-        };
-    }
-
-    private static IMethod ToMethod(IMethodSymbol method)
-    {
-        return new IMethod()
-        {
-            Name = method.Name,
-            ReturnType = method.ReturnsVoid ? null : ToType(method.ReturnType),
-            Attributes = method.GetAttributes()
-                .Select(a =)
-        }
-    }
-    
-    private static 
 }

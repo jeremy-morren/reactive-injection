@@ -14,6 +14,5 @@ public class MethodNameHelpers
     [Fact]
     public void WriteMethodNames()
     {
-        global::Generated.MethodHelpers.LogMethods(_output.WriteLine);
     }
 }
