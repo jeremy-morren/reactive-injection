@@ -2,7 +2,11 @@
 
 internal interface IConstructor : IToken
 {
-    IType DeclaringType { get; }
+    /// <summary>
+    /// Gets the declaring type
+    /// (i.e. the type which has this constructor)
+    /// </summary>
+    IType ContainingType { get; }
     
     IAttribute[] GetCustomAttributes();
     IParameter[] GetParameters();

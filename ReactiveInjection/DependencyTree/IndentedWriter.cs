@@ -7,7 +7,7 @@ public class IndentedWriter
     private readonly int _indentSize;
     
     public IndentedWriter(int indentSize = 4) => _indentSize = indentSize;
-    
+
     private readonly StringBuilder _builder = new();
 
     private int _currentIndentLevel = 0;
@@ -16,11 +16,29 @@ public class IndentedWriter
     {
         _builder.Append(new string(' ', _currentIndentLevel * 4));
     }
+    
+    /// <summary>
+    /// Increases the indent level by 1
+    /// </summary>
+    public void Push()
+    {
+        _currentIndentLevel++;
+    }
+    
+    /// <summary>
+    /// reduces indent level by 1
+    /// </summary>
+    public void Pop()
+    {
+        if (_currentIndentLevel == 0)
+            throw new InvalidOperationException("Indent level is already at 0");
+        _currentIndentLevel--;
+    }
 
     /// <summary>
     /// Writes an indented line and increases the indent level by 1
     /// </summary>
-    public void WriteLineAndPushIndent(string value)
+    public void WriteLineAndPush(string value)
     {
         WriteIndent();
         _builder.AppendLine(value);
@@ -31,16 +49,27 @@ public class IndentedWriter
     /// Writes a line without indent
     /// and increases the indent level by 1
     /// </summary>
-    public void WriteLineWithoutIndentAndPushIndent(string value)
+    public void WriteLineWithoutIndentAndPush(string value)
     {
         _builder.AppendLine(value);
         _currentIndentLevel++;
     }
     
     /// <summary>
+    /// Writes a line without indent and reduces the indent level by 1
+    /// </summary>
+    public void WriteRawLineAndPop(string value)
+    {
+        if (_currentIndentLevel == 0)
+            throw new InvalidOperationException("Indent level is already at 0");
+        _builder.AppendLine(value);
+        _currentIndentLevel--;
+    }
+
+    /// <summary>
     /// Writes an indented line and reduces the indent level by 1
     /// </summary>
-    public void PopIndentAndWriteLine(string value)
+    public void PopThenWriteLine(string value)
     {
         if (_currentIndentLevel == 0)
             throw new InvalidOperationException("Indent level is already at 0");
@@ -52,10 +81,29 @@ public class IndentedWriter
     /// <summary>
     /// Writes an indented line
     /// </summary>
+    public void WriteLine(char c)
+    {
+        WriteIndent();
+        _builder.Append(c);
+        _builder.AppendLine();
+    }
+    
+    /// <summary>
+    /// Writes an indented line
+    /// </summary>
     public void WriteLine(string value)
     {
         WriteIndent();
         _builder.AppendLine(value);
+    }
+    
+    /// <summary>
+    /// Writes an empty
+    /// </summary>
+    public void WriteLine()
+    {
+        //Empty line, we don't need indent
+        _builder.AppendLine();
     }
     
     /// <summary>
@@ -73,6 +121,15 @@ public class IndentedWriter
     public void WriteRaw(string value)
     {
         _builder.Append(value);
+    }
+    
+    /// <summary>
+    /// Writes value without any indent applied
+    /// </summary>
+    public void WriteRawLine(char c)
+    {
+        _builder.Append(c);
+        _builder.AppendLine();
     }
     
     /// <summary>

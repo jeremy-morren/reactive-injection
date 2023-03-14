@@ -28,7 +28,7 @@ internal class FactoryDependencyTreeBuilder
                 continue;
             }
 
-            if (method.IsDefined)
+            if (!method.IsPartialDefinition)
             {
                 //Is defined i.e. not partial
                 _log.FactoryMethodNotMarkedAsPartial(factory, method);
@@ -108,11 +108,11 @@ internal class FactoryDependencyTreeBuilder
 
         services = constructor.GetParameters()
             .Where(Attributes.HasFromDIAttribute)
-            .Select(p => p.ParameterType)
+            .Select(p => p.Type)
             .ToArray();
 
         var methodParams = method.GetParameters()
-            .Select(p => p.ParameterType)
+            .Select(p => p.Type)
             .ToList();
         
         var constructorParams = constructor.GetParameters()
@@ -123,31 +123,31 @@ internal class FactoryDependencyTreeBuilder
         foreach (var param in constructorParams)
         {
             //If it is a method param, then ignore
-            if (methodParams.Contains(param.ParameterType))
+            if (methodParams.Contains(param.Type))
                 continue;
             //Special case: if it is the factory, ignore
-            if (param.ParameterType.Equals(factory))
+            if (param.Type.Equals(factory))
                 continue;
             //Ensure it has a parameterless constructor
-            if (param.ParameterType.IsValueType)
+            if (param.Type.IsValueType)
             {
                 _log.StateIsValueType(constructor, param);
                 validState = false;
                 continue;
             }
-            if (param.ParameterType.IsAbstract)
+            if (param.Type.IsAbstract)
             {
                 _log.StateIsAbstractType(constructor, param);
                 validState = false;
                 continue;
             }
-            if (param.ParameterType.GetConstructors().All(c => c.GetParameters().Length != 0))
+            if (param.Type.GetConstructors().All(c => c.GetParameters().Length != 0))
             {
                 _log.StateHasNoParameterlessConstructor(constructor, param);
                 validState = false;
                 continue;
             }
-            state.Add(param.ParameterType);
+            state.Add(param.Type);
         }
         sharedState = state.ToArray();
         return validState;

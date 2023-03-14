@@ -11,7 +11,7 @@ internal class ReflectedMethod : ReflectedTokenBase, IMethod
     public string Name => _method.Name;
     public IType? ReturnType => _method.ReturnType == typeof(void) ? null : new ReflectedType(_method.ReturnType);
 
-    public IType? DeclaringType => _method.DeclaringType != null ? new ReflectedType(_method.DeclaringType) : null;
+    public IType ContainingType => new ReflectedType(_method.DeclaringType!);
     
     public IParameter[] GetParameters() => _method.GetParameters()
         .Select((p, i) => (IParameter) new ReflectedParameter(i, p))
@@ -21,7 +21,7 @@ internal class ReflectedMethod : ReflectedTokenBase, IMethod
         .Select(a => (IAttribute)new ReflectedAttribute(a))
         .ToArray();
 
-    public bool IsDefined => false; //For testing purposes, we just pretend
+    public bool IsPartialDefinition => false; //For testing purposes, we just pretend
 
     public override string ToString() => Name;
 }

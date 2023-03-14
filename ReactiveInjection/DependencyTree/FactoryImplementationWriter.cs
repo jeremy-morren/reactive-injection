@@ -13,63 +13,87 @@ internal class FactoryImplementationWriter
     public string GenerateCSharp(FactoryDependencyTree tree)
     {
         //We are aiming for early C# here
-        //For simplicity, we end up with the opening brace on the same line
 
         var sb = new IndentedWriter();
 
-        sb.WriteLineAndPushIndent($"namespace {tree.FactoryType.Namespace} {{");
+        sb.WriteLine("#nullable disable");
+        
+        sb.WriteLine($"namespace {tree.FactoryType.Namespace}");
+        sb.WriteLine('{');
+        sb.Push();
         
         //TODO: Get access level (public, internal etc) for type, methods etc
         
-        sb.WriteLineAndPushIndent($"public partial class {tree.FactoryType.Name} {{");
+        sb.WriteLine($"partial class {tree.FactoryType.Name}");
+        sb.WriteLine('{');
+        sb.Push();
         
         //Create readonly fields for services
         foreach (var svc in tree.Services)
-            sb.WriteLine($"private readonly {svc.CSharpName} {GetFieldName(svc)}; //Dependency injected service");
+            sb.WriteLine($"private readonly {svc.CSharpName} {GetName(svc)}; //Dependency injected service");
+        
+        sb.WriteLine();
 
         //Generate DI constructor
         sb.Write($"public {tree.FactoryType.Name}(");
-        WriteParameters(sb, tree.Services, t => $"{t.CSharpName} {GetFieldName(t)}");
-        sb.WriteLineWithoutIndentAndPushIndent(") {");
+        WriteParameters(sb, tree.Services, t => $"{t.CSharpName} {GetName(t)}");
+        sb.WriteRawLine(')');
+        sb.WriteLine('{');
+        sb.Push();
         foreach (var svc in tree.Services)
-            sb.WriteLine($"this.{GetFieldName(svc)} = {GetFieldName(svc)};");
-        sb.PopIndentAndWriteLine("}");
+            sb.WriteLine($"this.{GetName(svc)} = {GetName(svc)};");
+        sb.Pop();
+        sb.WriteLine('}');
+        
+        sb.WriteLine();
         
         //Create readonly fields for shared state
         foreach (var state in tree.SharedState)
             sb.WriteLine(
-                $"private readonly {state.CSharpName} {GetFieldName(state)} = new {state.CSharpName}(); //Shared state");
-
+                $"private readonly {state.CSharpName} {GetName(state)} = new {state.CSharpName}(); //Shared state");
+        
         foreach (var factory in tree.FactoryMethods)
         {
-            sb.Write($"public {factory.ReturnType.CSharpName} {factory.Method.Name}(");
+            sb.WriteLine();
+            
+            sb.Write($"public partial {factory.ReturnType.CSharpName} {factory.Method.Name}(");
             //We use the type field name as string, for reference below
-            WriteParameters(sb, factory.Method.GetParameters(), p => 
-                $"{p.ParameterType.FullName} {GetFieldName(p.ParameterType)}");
-            sb.WriteLineWithoutIndentAndPushIndent(") {");
+            WriteParameters(sb, 
+                factory.Method.GetParameters(), 
+                p => $"{p.Type.FullName} {p.Name}");
+            
+            sb.WriteRawLine(')');
+            sb.WriteLine('{');
+            
+            sb.Push();
 
             sb.Write($"return new {factory.ReturnType.CSharpName}(");
             
-            WriteParameters(sb, factory.Constructor.GetParameters(), param =>
-            {
-                //If is wrapping factory type, then use 'this'
-                if (param.ParameterType.Equals(tree.FactoryType))
-                    return "this";
-                
-                //Comes from method parameter?
-                if (factory.Method.GetParameters().Any(p => p.ParameterType.Equals(p.ParameterType)))
-                    return GetFieldName(param.ParameterType); //Use local variable (from parameter list)
-                
-                //Otherwise we use the version from 'this' (either shared state or injected)
-                return $"this.{GetFieldName(param.ParameterType)}";
-            });
+            WriteParameters(sb, 
+                factory.Constructor.GetParameters(), 
+                param =>
+                {
+                    //If is wrapping factory type, then use 'this'
+                    if (param.Type.Equals(tree.FactoryType))
+                        return "this";
+
+                    //Comes from method parameter?
+                    var methodParam = factory.Method.GetParameters().FirstOrDefault(p => p.Type.Equals(param.Type));
+                    if (methodParam != null)
+                        return methodParam.Name;
+                    
+                    //Otherwise we use the version from 'this' (either shared state or injected)
+                    return $"this.{GetName(param.Type)}";
+                });
 
             sb.WriteRawLine(");");
-            sb.PopIndentAndWriteLine("}");
+            sb.Pop();
+            sb.WriteLine('}');
         }
-
-        sb.PopIndentAndWriteLine("}"); //End of type declaration
-        sb.PopIndentAndWriteLine("}"); //End of namespace declaration
+        
+        //sb.Pop();
+        sb.PopThenWriteLine("}"); //End of type declaration
+        sb.PopThenWriteLine("}"); //End of namespace declaration
 
         return sb.ToString();
     }
@@ -78,14 +102,18 @@ internal class FactoryImplementationWriter
         IReadOnlyCollection<T> parameters,
         Func<T, string> toString)
     {
-        if (parameters.Count == 0) return;
-        writer.WriteLineAndPushIndent(string.Empty);
+        if (parameters.Count == 0)
+            return;
         foreach (var t in parameters)
-            writer.WriteLine($"{toString(t)},");
-        writer.TrimEnd(1 + Environment.NewLine.Length); //Remove trailing ',{Newline}'
+            writer.WriteRaw($"{toString(t)}, ");
+        writer.TrimEnd(2); //Remove trailing ', '
     }
 
-    private static string GetFieldName(IType type) =>
+    /// <summary>
+    /// Returns a name for a type suitable for
+    /// use as a field name or filename
+    /// </summary>
+    public static string GetName(IType type) =>
         type.CSharpName
             .Replace("global::", "")
             .Replace('.', '_')

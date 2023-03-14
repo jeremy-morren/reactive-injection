@@ -8,15 +8,15 @@ internal class ReflectedParameter : ReflectedTokenBase, IParameter
 
     public ReflectedParameter(int position, ParameterInfo param)
     {
-        Position = position;
+        Ordinal = position;
         _param = param;
     }
 
     public string Name => _param.Name;
     
-    public int Position { get; }
+    public int Ordinal { get; }
 
-    public IType ParameterType => new ReflectedType(_param.ParameterType);
+    public IType Type => new ReflectedType(_param.ParameterType);
 
     public IAttribute[] GetCustomAttributes() => _param.GetCustomAttributes()
         .Select(a => (IAttribute) new ReflectedAttribute(a))

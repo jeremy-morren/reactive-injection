@@ -14,13 +14,11 @@ internal interface IMethod : IToken
 
     public IParameter[] GetParameters();
 
-    public IType? DeclaringType { get; }
-
     public IAttribute[] GetCustomAttributes();
 
     /// <summary>
     /// Indicates whether the method is defined
     /// (i.e. whether the 'partial' keyword is used)
     /// </summary>
-    public bool IsDefined { get; }
+    public bool IsPartialDefinition { get; }
 }

@@ -11,49 +11,61 @@ internal class ErrorLogWriter
 
     public void FactoryMethodReturnsVoid(IType factory, IMethod method)
     {
-        _log.WriteError("RI1000",
+        _log.WriteError(method.Location,
+            "RI1010",
             "Invalid factory method return type",
-            $"Factory method {method.Name} on factory {factory} has an invalid return type",
-            method.Location);
+            "Factory method '{0}' on factory '{1}' has an invalid return type",
+            factory,
+            method);
     }
     
     public void FactoryMethodNotMarkedAsPartial(IType factory, IMethod method)
     {
-        _log.WriteError("RI1001",
+        _log.WriteError(method.Location,
+            "RI1011",
             "Factory method must be marked as partial",
-            $"Factory method {method.Name} on factory {factory} must be marked as partial",
-            method.Location);
+            "Factory method '{0}' on factory '{1}' must be marked as partial",
+            factory,
+            method);
     }
     
     public void MultipleConstructorsDefined(IType factory, IType viewModel)
     {
-        _log.WriteError("RI1010",
+        _log.WriteError(viewModel.Location,
+            "RI1020",
             "Multiple constructors defined on ViewModel",
-            $"ViewModel {viewModel} from factory {factory} has multiple constructors defined",
-            viewModel.Location);
+            "ViewModel '{0]' from factory '{1}' has multiple constructors defined",
+            viewModel,
+            factory);
     }
     
     public void StateIsValueType(IConstructor constructor, IParameter parameter)
     {
-        _log.WriteError("RI1011",
+        _log.WriteError(parameter.Location,
+            "RI1021",
             "Shared state cannot be value type",
-            $"State {parameter.ParameterType} on ViewModel {constructor.DeclaringType}: shared state cannot be value type",
-            parameter.Location);
+            "Shared state '{0}' on ViewModel '{1}': shared state cannot be value type",
+            parameter.Type,
+            constructor.ContainingType);
     }
     
     public void StateIsAbstractType(IConstructor constructor, IParameter parameter)
     {
-        _log.WriteError("RI1012",
+        _log.WriteError(parameter.Location,
+            "RI1022",
             "Shared state cannot be abstract type",
-            $"State {parameter.ParameterType} on ViewModel {constructor.DeclaringType}: shared state cannot be abstract type",
-            parameter.Location);
+            "Shared state '{0}' on ViewModel '{1}': shared state cannot be abstract type",
+            parameter.Type,
+            constructor.ContainingType);
     }
     
     public void StateHasNoParameterlessConstructor(IConstructor constructor, IParameter parameter)
     {
-        _log.WriteError("RI1013", 
-            $"Shared state type must have parameterless constructor defined", 
-            $"State {parameter.ParameterType} on {constructor.DeclaringType} has no parameterless constructor",
-            parameter.Location);
+        _log.WriteError(parameter.Location,
+            "RI1023",
+            "Shared state type must have parameterless constructor defined",
+            "Shared state '{0}' on ViewModel '{1}' has no parameterless constructor",
+            parameter.Type,
+            constructor.ContainingType);
     }
 }

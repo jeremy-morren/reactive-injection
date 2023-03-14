@@ -4,8 +4,9 @@ namespace ReactiveInjection.DependencyTree;
 
 internal interface IErrorLog
 {
-    void WriteError(string id,
+    void WriteError(Location location,
+        string id,
         string title,
-        string message,
-        Location location);
+        string messageFormat,
+        params object[] messageArgs);
 }

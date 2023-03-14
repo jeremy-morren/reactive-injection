@@ -13,7 +13,7 @@ internal class ReflectedConstructor : ReflectedTokenBase, IConstructor
         _source = source;
     }
 
-    public IType DeclaringType => new ReflectedType(_declaringType);
+    public IType ContainingType => new ReflectedType(_declaringType);
 
     public IAttribute[] GetCustomAttributes() => _source.GetCustomAttributes(true)
         .Select(a => (IAttribute) new ReflectedAttribute(a))

@@ -8,9 +8,9 @@ internal interface IParameter : IToken
     /// <summary>
     /// The 0-based index of the parameter
     /// </summary>
-    public int Position { get; }
+    public int Ordinal { get; }
 
-    public IType ParameterType { get; }
+    public IType Type { get; }
 
     public IAttribute[] GetCustomAttributes();
 }

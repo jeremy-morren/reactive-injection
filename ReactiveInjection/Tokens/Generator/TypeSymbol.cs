@@ -1,35 +1,48 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Reflection;
+using Microsoft.CodeAnalysis;
 
 namespace ReactiveInjection.Tokens.Generator;
 
 internal class TypeSymbol : IType
 {
     private readonly ITypeSymbol _source;
+    private readonly bool? _isPartial;
 
-    public TypeSymbol(ITypeSymbol source) => _source = source;
+    public TypeSymbol(ITypeSymbol source, bool? isPartial = null)
+    {
+        _source = source;
+        _isPartial = isPartial;
+    }
 
-    public Location Location => _source.Locations.FirstOrDefault(l => l.IsInSource) ?? _source.Locations.First();
+    public Location Location => _source.Locations.GetLocation();
 
-    public IAssembly Assembly => new AssemblyToken(_source.ContainingAssembly);
+    public IAssembly Assembly => new AssemblySymbol(_source.ContainingAssembly);
     
     public string? Namespace => _source.ContainingNamespace?.Name;
 
     public string Name => _source.Name;
-    
-    public string FullName => _source.MetadataName;
+
+    public string FullName =>
+        _source.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Substring("global::".Length);
 
     public bool IsValueType => _source.IsValueType;
     public bool IsAbstract => _source.IsAbstract;
 
-    public bool IsPartial => true; //TODO: Fix this
-    
+    public bool IsPartial => _isPartial ?? throw new NotImplementedException();
+
     public IType[] GetGenericArguments() => throw new NotImplementedException();
 
-    public IMethod[] GetMethods() => throw new NotImplementedException();
+    public IMethod[] GetMethods() => _source.GetMembers()
+        .Where(s => s is IMethodSymbol {MethodKind: MethodKind.Ordinary})
+        .Select(m => (IMethod) new MethodSymbol(m))
+        .ToArray();
 
-    public IConstructor[] GetConstructors() => throw new NotImplementedException();
-    
-    public string CSharpName => throw new NotImplementedException();
+    public IConstructor[] GetConstructors() => _source.GetMembers()
+        .Where(s => s is IMethodSymbol {MethodKind: MethodKind.Constructor})
+        .Select(m => (IConstructor) new ConstructorSymbol(m))
+        .ToArray();
+
+    public string CSharpName => _source.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
     public override string ToString() => _source.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
 

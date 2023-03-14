@@ -1,7 +1,7 @@
-﻿using ReactiveInjection.Tests.Setup.Models;
-using ReactiveInjection.Tests.Setup.Services;
+﻿using ReactiveInjection.Tests.DependencyTreeTests.Tree.Models;
+using ReactiveInjection.Tests.DependencyTreeTests.Tree.Services;
 
-namespace ReactiveInjection.Tests.Setup.ViewModels;
+namespace ReactiveInjection.Tests.DependencyTreeTests.Tree.ViewModels;
 
 public class ParentViewModel
 {
