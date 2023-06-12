@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveInjection.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveInjection.Abstractions", "ReactiveInjection.Abstractions\ReactiveInjection.Abstractions.csproj", "{DECA0F21-99DD-4581-8F54-9B1D06A44D43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveInjection.Tests.Generator", "ReactiveInjection.Tests.Generator\ReactiveInjection.Tests.Generator.csproj", "{BED08732-4190-4AD4-AD06-A7D9DFE3AB8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{DECA0F21-99DD-4581-8F54-9B1D06A44D43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DECA0F21-99DD-4581-8F54-9B1D06A44D43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DECA0F21-99DD-4581-8F54-9B1D06A44D43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BED08732-4190-4AD4-AD06-A7D9DFE3AB8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BED08732-4190-4AD4-AD06-A7D9DFE3AB8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BED08732-4190-4AD4-AD06-A7D9DFE3AB8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BED08732-4190-4AD4-AD06-A7D9DFE3AB8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

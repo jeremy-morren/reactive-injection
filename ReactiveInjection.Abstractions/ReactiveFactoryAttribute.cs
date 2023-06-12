@@ -1,4 +1,6 @@
-﻿namespace ReactiveInjection.Abstractions;
+﻿using System;
+
+namespace ReactiveInjection;
 
 /// <summary>
 /// Specifies that a factory should be constructed for a reactive service

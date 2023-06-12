@@ -1,9 +1,12 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using ReactiveInjection.Abstractions;
-using ReactiveInjection.Reflection;
+using Microsoft.CodeAnalysis.Text;
+using ReactiveInjection.DependencyTree;
+using ReactiveInjection.Tokens.Generator;
 
 namespace ReactiveInjection;
 
@@ -13,74 +16,50 @@ public class ReactiveFactoryGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var returnKinds = context.SyntaxProvider.CreateSyntaxProvider(
-            static (n, _) => n is MethodDeclarationSyntax,
-            static (n, _) => (IMethodSymbol)n.SemanticModel.GetDeclaredSymbol(n.Node)!);
-
-        var transformed = returnKinds.Select(static (m, ct) =>
-        {
-            return new
+            static (n, _) => n is TypeDeclarationSyntax,
+            static (n, _) =>
             {
-                Namespace = m.ContainingNamespace.Name,
-                Type = m.ContainingType.Name,
-                Method = m.Name,
-                Attributes = ToString(m.GetAttributes()
-                    .Select(a => new { a.AttributeClass?.Name }.ToString()))
-            };
-        });
+                return new
+                {
+                    Type = (ITypeSymbol) n.SemanticModel.GetDeclaredSymbol(n.Node)!,
+                    IsPartial = ((TypeDeclarationSyntax) n.Node).Modifiers
+                        .Any(t => t.IsKind(SyntaxKind.PartialKeyword))
+                };
+            });
+
+        var transformed = returnKinds
+            .Select(static (t, _) => new TypeSymbol(t.Type, t.IsPartial))
+            .Where(t => t.GetMethods().Any(Attributes.HasReactiveFactoryAttribute));
 
         var collected = transformed.Collect();
 
         context.RegisterSourceOutput(collected, static (sourceProductionContext, factories) =>
         {
-            var sb = new StringBuilder();
-
-            sb.AppendLine(
-                "namespace Generated {\npublic static class MethodHelpers {\npublic static void LogMethods(System.Action<string> log) {\n");
-
+            var log = new CompilationLogProvider(sourceProductionContext);
+            var builder = new FactoryDependencyTreeBuilder(log);
+            var writer = new FactoryImplementationWriter(log);
             foreach (var factory in factories)
             {
-                sb.AppendLine($"log(\"{factory}\");");
+                try
+                {
+                    if (!builder.Build(factory, out var tree))
+                        continue; //Errors will already have been written to log, we can ignore
+                    var name = FactoryImplementationWriter.GetName(factory);
+                    var result = writer.GenerateCSharp(tree);
+                    sourceProductionContext.AddSource($"{name}.g.cs", SourceText.From(result, Encoding.UTF8));
+                }
+                catch (Exception e)
+                {
+                    log.WriteError(Location.None,
+                        "RI1000",
+                        "Unexpected error generating view model factory",
+                        "An unexpected error occurred generating the view model factory '{0}': {1}: {2}",
+                        factory,
+                        e.GetType(),
+                        e.Message);
+                }
             }
-
-            sb.AppendLine("} } }");
-
-            sourceProductionContext.AddSource("MethodNames.cs", sb.ToString());
         });
     }
 
-
-    private record Factory(string ContainingNamespace, string ParentClassName, string MethodName, bool ShouldProcess);
-
-    private static string ToString<T>(IEnumerable<T> input)
-    {
-        var values = input.Select(v => v?.ToString());
-
-        return $"[ {string.Join(", ", values)} ]";
-    }
-    
-    private static IType ToType(ITypeSymbol type)
-    {
-        var tiType = new IType()
-        {
-            Namespace = type.ContainingNamespace.Name,
-            Name = type.Name,
-            ContainingType = type.ContainingType != null ? ToType(type.ContainingType) : null,
-            IsValueType = type.IsValueType,
-            IsAbstract = type.IsAbstract,
-            IsNullableReferenceType = type.NullableAnnotation == NullableAnnotation.Annotated,
-        };
-    }
-
-    private static IMethod ToMethod(IMethodSymbol method)
-    {
-        return new IMethod()
-        {
-            Name = method.Name,
-            ReturnType = method.ReturnsVoid ? null : ToType(method.ReturnType),
-            Attributes = method.GetAttributes()
-                .Select(a =)
-        }
-    }
-    
-    private static 
 }

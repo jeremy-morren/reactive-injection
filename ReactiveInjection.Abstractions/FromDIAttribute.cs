@@ -1,4 +1,6 @@
-﻿namespace ReactiveInjection.Abstractions;
+﻿using System;
+
+namespace ReactiveInjection;
 
 /// <summary>
 /// Indicates that the service should be resolved from the DI container
