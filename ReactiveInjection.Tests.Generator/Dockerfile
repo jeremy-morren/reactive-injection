@@ -24,7 +24,7 @@ RUN dotnet pack "ReactiveInjection/ReactiveInjection.csproj" \
 
 FROM build-base as build
 
-RUN echo '<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><add key="Local" value="/packages" /> </packageSources></configuration>' > 'nuget.config'
+RUN dotnet nuget add source "/packages" --name local
 COPY --from=nuget-build /app/pack /packages
 
 COPY "ReactiveInjection.Tests.Generator/ReactiveInjection.Tests.Generator.csproj" .

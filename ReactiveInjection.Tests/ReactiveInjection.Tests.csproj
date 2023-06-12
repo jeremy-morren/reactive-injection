@@ -35,6 +35,9 @@
       <None Update="GeneratorTests\Source.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="GeneratorTests\GeneratorTests.Generate#treeModelsViewModelFactory.g.verified.cs">
+        <DependentUpon>GeneratorTests.cs</DependentUpon>
+      </None>
     </ItemGroup>
 
 </Project>

@@ -1,17 +1,18 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b522d226_002De242_002D46ef_002D8fd6_002D4242f18c7ceb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetReflectedType" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b522d226_002De242_002D46ef_002D8fd6_002D4242f18c7ceb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetReflectedType" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::9FC834D4-5E5C-4878-96B3-B98546D71252::net7.0::ReactiveInjection.Tests.GeneratorTests.GeneratorTests.Generate&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::BED08732-4190-4AD4-AD06-A7D9DFE3AB8E::net7.0::ReactiveInjection.Tests.Generator.CreateViewModelTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c1fa33e8_002D5ccc_002D43e9_002Da5d7_002Dd052e8800ff0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="WriteMethodNames" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c1fa33e8_002D5ccc_002D43e9_002Da5d7_002Dd052e8800ff0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="WriteMethodNames" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::9FC834D4-5E5C-4878-96B3-B98546D71252::net7.0::ReactiveInjection.Tests.GeneratorTests.GeneratorTests.Generate&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::9FC834D4-5E5C-4878-96B3-B98546D71252::net7.0::ReactiveInjection.Tests.GeneratorTests.GeneratorTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Housekeeping/UnitTestingMru/UnitTestRunner/SpawnedProcessesKnownList/=rider64_002Eexe/@EntryIndexedValue">KillOrphaned</s:String>
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=bed08732_002D4190_002D4ad4_002Dad06_002Da7d9dfe3ab8e_0023ReactiveInjection_002ETests_002EGenerator/@EntryIndexedValue">True</s:Boolean>
+	
 	
 	
 	

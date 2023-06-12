@@ -19,8 +19,8 @@ internal class TypeSymbol : IType
     public Location Location => _source.Locations.GetLocation();
 
     public IAssembly Assembly => new AssemblySymbol(_source.ContainingAssembly);
-    
-    public string? Namespace => _source.ContainingNamespace?.Name;
+
+    public string? Namespace => _source.ContainingNamespace?.ToString();
 
     public string Name => _source.Name;
 
