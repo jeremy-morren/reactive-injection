@@ -24,8 +24,17 @@ internal class TypeSymbol : IType
 
     public string Name => _source.Name;
 
-    public string FullName =>
-        _source.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Substring("global::".Length);
+    public string FullName
+    {
+        get
+        {
+            var name = _source.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            const string global = "global::";
+            if (name.StartsWith(global))
+                name = name.Substring(global.Length);
+            return name;
+        }
+    }
 
     public bool IsValueType => _source.IsValueType;
     public bool IsAbstract => _source.IsAbstract;

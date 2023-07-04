@@ -49,11 +49,12 @@ public class BuildDependencyTreeTests
     [Fact]
     public void WriteFactoryImplementation()
     {
-        
         var log = new FakeErrorLog();
         
         var builder = new FactoryDependencyTreeBuilder(log);
-        Assert.True(builder.Build(new ReflectedType(typeof(ViewModelFactory)), out var tree));
+        var b = builder.Build(new ReflectedType(typeof(ViewModelFactory)), out var tree);
+        Assert.Empty(log.Errors);
+        Assert.True(b);
 
         var writer = new FactoryImplementationWriter(log);
 

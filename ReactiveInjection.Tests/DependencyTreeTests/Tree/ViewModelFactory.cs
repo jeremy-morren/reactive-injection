@@ -10,4 +10,7 @@ public class ViewModelFactory
 
     [ReactiveFactory]
     public ChildViewModel NewChild(Model model) => throw new NotImplementedException();
+
+    [ReactiveFactory]
+    public SimpleViewModel SimpleViewModel(string str) => throw new NotImplementedException();
 }

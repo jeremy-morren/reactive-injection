@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using ReactiveInjection.Tokens.Reflection;
 
 namespace ReactiveInjection.Tokens.Generator;
 

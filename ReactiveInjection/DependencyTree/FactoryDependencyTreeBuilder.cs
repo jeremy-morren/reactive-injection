@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using ReactiveInjection.Tokens;
-using ReactiveInjection.Tokens.Reflection;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 
