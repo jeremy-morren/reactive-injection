@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ReactiveInjection.Tokens;
 
-namespace ReactiveInjection.Tokens.Reflection;
+namespace ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 
 internal class ReflectedAttribute : ReflectedTokenBase, IAttribute
 {
@@ -15,5 +15,5 @@ internal class ReflectedAttribute : ReflectedTokenBase, IAttribute
 
     public IType Type => new ReflectedType(_value.GetType());
 
-    public override string ToString() => Type.ToString();
+    public override string? ToString() => Type.ToString();
 }

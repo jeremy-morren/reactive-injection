@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
+using ReactiveInjection.Tokens;
 
-namespace ReactiveInjection.Tokens.Reflection;
+namespace ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 
 internal class ReflectedType : ReflectedTokenBase, IType
 {

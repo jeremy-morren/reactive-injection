@@ -1,9 +1,9 @@
 ﻿using ReactiveInjection.DependencyTree;
+using ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 using ReactiveInjection.Tests.DependencyTreeTests.Tree;
 using ReactiveInjection.Tests.DependencyTreeTests.Tree.Models;
 using ReactiveInjection.Tests.DependencyTreeTests.Tree.Services;
 using ReactiveInjection.Tokens;
-using ReactiveInjection.Tokens.Reflection;
 using Xunit.Abstractions;
 
 namespace ReactiveInjection.Tests.DependencyTreeTests;

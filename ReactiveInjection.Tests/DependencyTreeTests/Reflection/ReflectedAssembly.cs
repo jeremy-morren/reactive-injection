@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
+using ReactiveInjection.Tokens;
 
-namespace ReactiveInjection.Tokens.Reflection;
+namespace ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 
 internal class ReflectedAssembly : IAssembly
 {
@@ -8,9 +9,9 @@ internal class ReflectedAssembly : IAssembly
 
     public ReflectedAssembly(Assembly assembly) => _assembly = assembly;
 
-    public string Name => _assembly.GetName().Name;
+    public string Name => _assembly.GetName().Name!;
 
-    public string FullName => _assembly.FullName;
+    public string FullName => _assembly.FullName!;
 
     public override string ToString() => FullName;
     

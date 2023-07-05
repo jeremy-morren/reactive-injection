@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace ReactiveInjection.Tokens.Reflection;
+namespace ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 
 internal abstract class ReflectedTokenBase
 {

@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
+using ReactiveInjection.Tokens;
 
-namespace ReactiveInjection.Tokens.Reflection;
+namespace ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 
 internal class ReflectedParameter : ReflectedTokenBase, IParameter
 {
@@ -13,7 +13,7 @@ internal class ReflectedParameter : ReflectedTokenBase, IParameter
         _param = param;
     }
 
-    public string Name => _param.Name;
+    public string Name => _param.Name!;
     
     public int Ordinal { get; }
 
