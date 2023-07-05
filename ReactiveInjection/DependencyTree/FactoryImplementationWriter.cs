@@ -84,9 +84,10 @@ internal class FactoryImplementationWriter
                     //If is wrapping factory type, then use 'this'
                     if (param.Type.Equals(tree.FactoryType))
                         return "this";
-
+                    
                     //Comes from method parameter?
-                    var methodParam = factory.Method.GetParameters().FirstOrDefault(p => p.Type.Equals(param.Type));
+                    var methodParam = factory.Method.GetParameters().FirstOrDefault(p => p.Name == param.Name);
+                    
                     if (methodParam != null)
                         return methodParam.Name;
                     

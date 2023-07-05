@@ -113,7 +113,7 @@ internal class FactoryDependencyTreeBuilder
             .ToArray();
 
         var methodParams = method.GetParameters()
-            .Select(p => p.Type)
+            .Select(p => p.Name)
             .ToList();
         
         var constructorParams = constructor.GetParameters()
@@ -124,7 +124,7 @@ internal class FactoryDependencyTreeBuilder
         foreach (var param in constructorParams)
         {
             //If it is a method param, then ignore
-            if (methodParams.Contains(param.Type))
+            if (methodParams.Contains(param.Name))
                 continue;
             //Special case: if it is the factory, ignore
             if (param.Type.Equals(factory))

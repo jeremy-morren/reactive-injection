@@ -55,11 +55,7 @@ namespace Tree.Models
     
     public class SimpleViewModel
     {
-        public string Str { get; }
-        public SimpleViewModel(string str) 
-        {
-            Str = str;
-        }
+        public SimpleViewModel(string str, string str2) {}
     }
     
     public partial class ViewModelFactory
@@ -71,6 +67,6 @@ namespace Tree.Models
         public partial ChildViewModel NewChild(Model model);
         
         [ReactiveFactory]
-        public partial SimpleViewModel NewSimple(string str);
+        public partial SimpleViewModel NewSimple(string str, string str2);
     }
 }

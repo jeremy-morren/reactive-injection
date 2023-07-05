@@ -33,9 +33,9 @@ namespace Tree.Models
             return new global::Tree.Models.ChildViewModel(this.treeModelsSharedState, model, this.treeModelsService, this.systemCollectionsGenericList_int, this.systemCollectionsGenericList_intArray);
         }
 
-        public partial global::Tree.Models.SimpleViewModel NewSimple(string str)
+        public partial global::Tree.Models.SimpleViewModel NewSimple(string str, string str2)
         {
-            return new global::Tree.Models.SimpleViewModel(str);
+            return new global::Tree.Models.SimpleViewModel(str, str2);
         }
     }
 }
