@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReactiveInjection.Tokens;
+﻿namespace ReactiveInjection.Tokens;
 
 internal interface IAssembly : IEquatable<IAssembly>
 {

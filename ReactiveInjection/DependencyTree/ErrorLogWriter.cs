@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using ReactiveInjection.Tokens;
+﻿using ReactiveInjection.Tokens;
 
 namespace ReactiveInjection.DependencyTree;
 

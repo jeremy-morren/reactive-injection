@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using ReactiveInjection.DependencyTree;
 
 namespace ReactiveInjection;

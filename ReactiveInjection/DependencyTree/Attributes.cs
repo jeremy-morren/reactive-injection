@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using ReactiveInjection.Tokens;
+﻿using ReactiveInjection.Tokens;
 
 namespace ReactiveInjection.DependencyTree;
 

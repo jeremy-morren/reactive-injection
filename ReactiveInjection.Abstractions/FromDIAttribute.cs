@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReactiveInjection;
+﻿namespace ReactiveInjection;
 
 /// <summary>
 /// Indicates that the service should be resolved from the DI container

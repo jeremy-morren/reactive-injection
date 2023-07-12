@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReactiveInjection;
+﻿namespace ReactiveInjection;
 
 /// <summary>
 /// Specifies that a factory should be constructed for a reactive service

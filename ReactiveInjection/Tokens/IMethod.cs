@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿
 // ReSharper disable ReturnTypeCanBeEnumerable.Global
 
 namespace ReactiveInjection.Tokens;
