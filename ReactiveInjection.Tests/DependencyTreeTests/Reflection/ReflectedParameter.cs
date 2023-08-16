@@ -19,7 +19,7 @@ internal class ReflectedParameter : ReflectedTokenBase, IParameter
 
     public IType Type => new ReflectedType(_param.ParameterType);
 
-    public IAttribute[] GetCustomAttributes() => _param.GetCustomAttributes()
+    public IEnumerable<IAttribute> Attributes => _param.GetCustomAttributes()
         .Select(a => (IAttribute) new ReflectedAttribute(a))
         .ToArray();
 

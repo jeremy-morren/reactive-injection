@@ -4,29 +4,25 @@ namespace ReactiveInjection.DependencyTree;
 
 internal static class Attributes
 {
-    //NB: The generated .nuspec file excludes Abstractions assembly during build & analyze
-    //Therefore we can't reference the types directly (rather we have to use strings here)
-    
-    public static bool HasReactiveFactoryAttribute(IMethod method)
+    private static bool IsType(IAttribute attribute, string name)
     {
-        return method.GetCustomAttributes()
-            .Where(IsReactiveInjectionAbstractionsAssembly)
-            .Any(a => a.Type is
-            {
-                FullName: "ReactiveInjection.ReactiveFactoryAttribute"
-            });
+        return attribute.Type.Name.Equals(name, StringComparison.Ordinal);
     }
     
-    public static bool HasFromDIAttribute(IParameter parameter)
+    public static bool IsReactiveFactoryAttribute(IAttribute attribute)
     {
-        return parameter.GetCustomAttributes()
-            .Where(IsReactiveInjectionAbstractionsAssembly)
-            .Any(a => a.Type is
-            {
-                FullName: "ReactiveInjection.FromDIAttribute"
-            });
+        return IsType(attribute, "ReactiveFactoryAttribute");
     }
-
-    private static bool IsReactiveInjectionAbstractionsAssembly(IAttribute attribute) => 
-        attribute.Type.Assembly.Name == "ReactiveInjection.Abstractions";
+    
+    public static bool HasFromServicesAttribute(IParameter parameter)
+    {
+        return parameter.Attributes
+            .Any(a => IsType(a, "FromServicesAttribute"));
+    }
+    
+    public static bool HasSharedStateAttribute(IParameter parameter)
+    {
+        return parameter.Attributes
+            .Any(a => IsType(a, "SharedStateAttribute"));
+    }
 }

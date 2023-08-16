@@ -9,10 +9,12 @@
 
     <ItemGroup>
         <PackageReference Include="Docker.DotNet" Version="3.125.13" />
+        <PackageReference Include="FluentAssertions" Version="6.11.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.4.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
         <PackageReference Include="Moq" Version="4.18.4" />
+        <PackageReference Include="Shouldly" Version="4.2.1" />
         <PackageReference Include="Verify.SourceGenerators" Version="2.1.0" />
         <PackageReference Include="Verify.Xunit" Version="19.11.1" />
         <PackageReference Include="xunit" Version="2.4.2" />
@@ -32,12 +34,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="GeneratorTests\Source.txt">
+      <None Include="ViewModels.cs">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="GeneratorTests\GeneratorTests.Generate#treeModelsViewModelFactory.g.verified.cs">
-        <DependentUpon>GeneratorTests.cs</DependentUpon>
-      </None>
+        
+<!--      <None Update="GeneratorTests\GeneratorTests.Generate#treeModelsViewModelFactory.g.verified.cs">-->
+<!--        <DependentUpon>GeneratorTests.cs</DependentUpon>-->
+<!--      </None>-->
     </ItemGroup>
 
 </Project>

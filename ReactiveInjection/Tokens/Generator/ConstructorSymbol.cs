@@ -17,14 +17,12 @@ internal class ConstructorSymbol : IConstructor
     
     public IType ContainingType => new TypeSymbol(_source.ContainingType);
 
-    public IAttribute[] GetCustomAttributes() => _source.GetAttributes()
+    public IEnumerable<IAttribute> Attributes => _source.GetAttributes()
         .Where(a => a.AttributeClass != null)
-        .Select(a => (IAttribute) new AttributeSymbol(Location, a))
-        .ToArray();
+        .Select(a => new AttributeSymbol(Location, a));
 
-    public IParameter[] GetParameters() => _source.Parameters
-        .Select(p => (IParameter)new ParameterSymbol(p))
-        .ToArray();
+    public IEnumerable<IParameter> Parameters => _source.Parameters
+        .Select(p => new ParameterSymbol(p));
 
     public override string ToString() => _source.ToDisplayString();
 }

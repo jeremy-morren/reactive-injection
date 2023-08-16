@@ -7,7 +7,8 @@ internal class TypeSymbol : IType
     private readonly ITypeSymbol _source;
     private readonly bool? _isPartial;
 
-    public TypeSymbol(ITypeSymbol source, bool? isPartial = null)
+    public TypeSymbol(ITypeSymbol source, 
+        bool? isPartial = null)
     {
         _source = source;
         _isPartial = isPartial;
@@ -21,34 +22,16 @@ internal class TypeSymbol : IType
 
     public string Name => _source.Name;
 
-    public string FullName
-    {
-        get
-        {
-            var name = _source.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            const string global = "global::";
-            if (name.StartsWith(global))
-                name = name.Substring(global.Length);
-            return name;
-        }
-    }
+    public string FullName => _source.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
     public bool IsValueType => _source.IsValueType;
     public bool IsAbstract => _source.IsAbstract;
 
     public bool IsPartial => _isPartial ?? throw new NotImplementedException();
 
-    public IType[] GetGenericArguments() => throw new NotImplementedException();
-
-    public IMethod[] GetMethods() => _source.GetMembers()
-        .Where(s => s is IMethodSymbol
-            {
-                MethodKind: MethodKind.Ordinary,
-                DeclaredAccessibility: Accessibility.Public
-            })
-        .Select(m => (IMethod) new MethodSymbol(m))
-        .ToArray();
-
+    public IEnumerable<IAttribute> GetAttributes() => _source.GetAttributes()
+        .Select(a => (IAttribute)new AttributeSymbol(Location, a));
+    
     public IConstructor[] GetConstructors() => _source.GetMembers()
         .Where(s => s is IMethodSymbol {MethodKind: MethodKind.Constructor})
         .Select(m => (IConstructor) new ConstructorSymbol(m))

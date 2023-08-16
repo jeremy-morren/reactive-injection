@@ -4,5 +4,5 @@ namespace ReactiveInjection.Tokens;
 
 internal interface IToken
 {
-    internal Location Location { get; }
+    public Location Location { get; }
 }

@@ -16,11 +16,9 @@ internal class ReflectedConstructor : ReflectedTokenBase, IConstructor
 
     public IType ContainingType => new ReflectedType(_declaringType);
 
-    public IAttribute[] GetCustomAttributes() => _source.GetCustomAttributes(true)
-        .Select(a => (IAttribute) new ReflectedAttribute(a))
-        .ToArray();
+    public IEnumerable<IAttribute> Attributes => _source.GetCustomAttributes(true)
+        .Select(a => new ReflectedAttribute(a));
 
-    public IParameter[] GetParameters() => _source.GetParameters()
-        .Select((p, i) => (IParameter)new ReflectedParameter(i, p))
-        .ToArray();
+    public IEnumerable<IParameter> Parameters => _source.GetParameters()
+        .Select((p, i) => new ReflectedParameter(i, p));
 }

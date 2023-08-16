@@ -7,25 +7,34 @@ internal class ErrorLogWriter
     private readonly IErrorLog _log;
 
     public ErrorLogWriter(IErrorLog log) => _log = log;
-
-    public void FactoryMethodReturnsVoid(IType factory, IMethod method)
+    
+    public void FactoryIsNotPartial(IType factory)
     {
-        _log.WriteError(method.Location,
-            "RI1010",
-            "Invalid factory method return type",
-            "Factory method '{0}' on factory '{1}' has an invalid return type",
-            factory,
-            method);
+        _log.WriteError(factory.Location,
+            "RI1001",
+            "ViewModel factory must be partial",
+            "ViewModel factory '{0}' must be declared as partial to enable source generation",
+            factory.FullName);
     }
     
-    public void FactoryMethodNotMarkedAsPartial(IType factory, IMethod method)
+    public void ViewModelIsValueType(IType factory, IType viewModel)
     {
-        _log.WriteError(method.Location,
+        _log.WriteError(factory.Location,
+            "RI1010",
+            "View model cannot be value type",
+            "View model factory '{0}': ViewModel '{1}' cannot be value type",
+            factory.FullName,
+            viewModel.FullName);
+    }
+    
+    public void ViewModelIsAbstract(IType factory, IType viewModel)
+    {
+        _log.WriteError(factory.Location,
             "RI1011",
-            "Factory method must be marked as partial",
-            "Factory method '{0}' on factory '{1}' must be marked as partial",
-            factory,
-            method);
+            "View model cannot be abstract",
+            "View model factory '{0}': ViewModel '{1}' cannot be abstract",
+            factory.FullName,
+            viewModel.FullName);
     }
     
     public void MultipleConstructorsDefined(IType factory, IType viewModel)

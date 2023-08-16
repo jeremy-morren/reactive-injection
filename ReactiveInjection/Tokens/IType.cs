@@ -21,12 +21,10 @@ internal interface IType : IToken, IEquatable<IType>
     public bool IsPartial { get; }
 
     /// <summary>
-    /// Searches for all public instance methods methods defined for the current <see cref="IType" />
+    /// Gets all attributes applied to a type
     /// </summary>
-    /// <remarks>
-    /// This is the equivalent of  of <c>Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)</c>
-    /// </remarks>
-    public IMethod[] GetMethods();
+    /// <returns></returns>
+    public IEnumerable<IAttribute> GetAttributes();
 
     /// <summary>
     /// Searches for all public constructors
@@ -38,7 +36,7 @@ internal interface IType : IToken, IEquatable<IType>
 
     /// <summary>
     /// Gets a fully qualified CSharp type name
-    /// (ie fully opened generic type)
+    /// (ie fully opened generic type), including 'global::' prefix
     /// </summary>
     public string CSharpName { get; }
 }

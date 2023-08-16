@@ -9,33 +9,49 @@ namespace Tree.Models
     partial class ViewModelFactory
     {
         private readonly global::Tree.Models.Service treeModelsService; //Dependency injected service
-        private readonly global::System.IServiceProvider systemIServiceProvider; //Dependency injected service
         private readonly global::System.Collections.Generic.List<int> systemCollectionsGenericList_int; //Dependency injected service
         private readonly global::System.Collections.Generic.List<int[]> systemCollectionsGenericList_intArray; //Dependency injected service
+        private readonly global::System.IServiceProvider systemIServiceProvider; //Dependency injected service
 
-        public ViewModelFactory(global::Tree.Models.Service treeModelsService, global::System.IServiceProvider systemIServiceProvider, global::System.Collections.Generic.List<int> systemCollectionsGenericList_int, global::System.Collections.Generic.List<int[]> systemCollectionsGenericList_intArray)
+        public ViewModelFactory(global::Tree.Models.Service treeModelsService, global::System.Collections.Generic.List<int> systemCollectionsGenericList_int, global::System.Collections.Generic.List<int[]> systemCollectionsGenericList_intArray, global::System.IServiceProvider systemIServiceProvider)
         {
             this.treeModelsService = treeModelsService;
-            this.systemIServiceProvider = systemIServiceProvider;
             this.systemCollectionsGenericList_int = systemCollectionsGenericList_int;
             this.systemCollectionsGenericList_intArray = systemCollectionsGenericList_intArray;
+            this.systemIServiceProvider = systemIServiceProvider;
         }
 
         private readonly global::Tree.Models.SharedState treeModelsSharedState = new global::Tree.Models.SharedState(); //Shared state
+        private readonly global::System.Collections.ObjectModel.ObservableCollection<global::Tree.Models.SharedState> systemCollectionsObjectModelObservableCollection_TreeModelsSharedState = new global::System.Collections.ObjectModel.ObservableCollection<global::Tree.Models.SharedState>(); //Shared state
 
-        public partial global::Tree.Models.ParentViewModel NewParent()
+        public global::Tree.Models.ViewModel1 ViewModel1(global::Tree.Models.Model model)
         {
-            return new global::Tree.Models.ParentViewModel(this.treeModelsSharedState, this, this.treeModelsService, this.systemIServiceProvider);
+            return new global::Tree.Models.ViewModel1(this.treeModelsSharedState, model, this.treeModelsService, this.systemCollectionsGenericList_int, this.systemCollectionsGenericList_intArray);
         }
 
-        public partial global::Tree.Models.ChildViewModel NewChild(Tree.Models.Model model)
+        public global::Tree.Models.ViewModel2 ViewModel2(global::Tree.Models.ViewModelFactory factory)
         {
-            return new global::Tree.Models.ChildViewModel(this.treeModelsSharedState, model, this.treeModelsService, this.systemCollectionsGenericList_int, this.systemCollectionsGenericList_intArray);
+            return new global::Tree.Models.ViewModel2(this.treeModelsSharedState, this, this.treeModelsService, this.systemIServiceProvider);
         }
 
-        public partial global::Tree.Models.SimpleViewModel NewSimple(string str, string str2)
+        public global::Tree.Models.ViewModel3 ViewModel3(string str, string str2)
         {
-            return new global::Tree.Models.SimpleViewModel(str, str2);
+            return new global::Tree.Models.ViewModel3(str, this.systemCollectionsObjectModelObservableCollection_TreeModelsSharedState, str2);
+        }
+
+        public global::Tree.Models.ViewModel4 ViewModel4()
+        {
+            return new global::Tree.Models.ViewModel4(this.treeModelsSharedState);
+        }
+
+        public global::Tree.Models.ViewModel5 ViewModel5(global::System.Collections.ObjectModel.ReadOnlyObservableCollection<global::Tree.Models.SharedState> parameter)
+        {
+            return new global::Tree.Models.ViewModel5(parameter);
+        }
+
+        public global::Tree.Models.ViewModel6 ViewModel6()
+        {
+            return new global::Tree.Models.ViewModel6();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using ReactiveInjection.DependencyTree;
+﻿using System.Collections.ObjectModel;
+using FluentAssertions;
+using ReactiveInjection.DependencyTree;
 using ReactiveInjection.Tests.DependencyTreeTests.Reflection;
-using ReactiveInjection.Tests.DependencyTreeTests.Tree;
-using ReactiveInjection.Tests.DependencyTreeTests.Tree.Models;
-using ReactiveInjection.Tests.DependencyTreeTests.Tree.Services;
 using ReactiveInjection.Tokens;
+using Shouldly;
+using Tree.Models;
 using Xunit.Abstractions;
 
 namespace ReactiveInjection.Tests.DependencyTreeTests;
@@ -20,52 +21,62 @@ public class BuildDependencyTreeTests
     public void GetReflectedType(Type type)
     {
         var t = new ReflectedType(type);
-        Assert.NotEmpty(t.GetMethods());
-        Assert.NotEmpty(t.GetConstructors());
+        t.GetConstructors().ShouldNotBeEmpty();
+        t.GetAttributes().ShouldNotBeEmpty();
     }
     
     [Fact]
     public void BuildDependencyTree()
     {
         var log = new FakeErrorLog();
-        
+
         var builder = new FactoryDependencyTreeBuilder(log);
-        var built = builder.Build(new ReflectedType(typeof(ViewModelFactory)), out var tree);
+        var built = builder.Build(new ReflectedType(typeof(ViewModelFactory), true), out var tree);
 
-        Assert.Empty(log.Errors);
+        log.Errors.ShouldBeEmpty();
+        built.ShouldBeTrue();
 
-        Assert.True(built);
+        tree.ViewModels.ShouldNotBeEmpty();
+        tree.ViewModels.ShouldAllBe(t => t.Type.Name.StartsWith("ViewModel"));
+        tree.ViewModels.ShouldContain(t => t.MethodParams.Length > 0);
+        tree.ViewModels.ShouldContain(t => t.MethodParams.Length == 0);
+        
+        tree.ViewModels.SelectMany(vm => vm.MethodParams)
+            .ShouldNotContain(p => Equals<ViewModelFactory>(p.Type));
 
-        Assert.NotEmpty(tree.FactoryMethods);
-
-        Assert.Single(tree.SharedState);
-        Assert.All(tree.SharedState, t => Assert.True(Equals<SharedState>(t)));
-
-        Assert.Equal(3, tree.Services.Length);
-        Assert.All(tree.Services, t => 
-            Assert.True(Equals<Service>(t) || Equals<IServiceProvider>(t) || Equals<List<int>>(t)));
+        tree.SharedState.Should().HaveCount(2);
+        tree.SharedState.Should().Contain(new[] { typeof(SharedState), typeof(ObservableCollection<SharedState>) });
+        
+        tree.Services.Should().HaveCount(4);
+        tree.Services.Should().Contain(new[] 
+        { 
+            typeof(Service), 
+            typeof(IServiceProvider), 
+            typeof(List<int>) ,
+            typeof(List<int[]>) 
+        });
     }
 
     [Fact]
     public void WriteFactoryImplementation()
     {
         var log = new FakeErrorLog();
-        
-        var builder = new FactoryDependencyTreeBuilder(log);
-        var b = builder.Build(new ReflectedType(typeof(ViewModelFactory)), out var tree);
-        Assert.Empty(log.Errors);
-        Assert.True(b);
 
+        var builder = new FactoryDependencyTreeBuilder(log);
+        var built = builder.Build(new ReflectedType(typeof(ViewModelFactory), true), out var tree);
+        log.Errors.ShouldBeEmpty();
+        built.ShouldBeTrue();
+        
         var writer = new FactoryImplementationWriter(log);
 
         var csharp = writer.GenerateCSharp(tree);
 
-        Assert.NotNull(csharp);
+        csharp.ShouldNotBeNullOrEmpty();
 
-        Assert.Empty(log.Errors);
+        log.Errors.ShouldBeEmpty();
 
         _output.WriteLine(csharp);
     }
 
-    private static bool Equals<T>(IType type) => type.Equals(new ReflectedType(typeof(T)));
+    private static bool Equals<T>(IType other) => new ReflectedType(typeof(T)).Equals(other);
 }

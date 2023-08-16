@@ -8,6 +8,6 @@ internal interface IConstructor : IToken
     /// </summary>
     IType ContainingType { get; }
     
-    IAttribute[] GetCustomAttributes();
-    IParameter[] GetParameters();
+    IEnumerable<IAttribute> Attributes { get; }
+    IEnumerable<IParameter> Parameters { get; }
 }

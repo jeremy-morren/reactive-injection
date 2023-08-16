@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,23 +18,21 @@ public class ReactiveFactoryGenerator : IIncrementalGenerator
             static (n, _) => n is TypeDeclarationSyntax,
             static (n, _) =>
             {
-                return new
-                {
-                    Type = (ITypeSymbol) n.SemanticModel.GetDeclaredSymbol(n.Node)!,
-                    IsPartial = ((TypeDeclarationSyntax) n.Node).Modifiers
-                        .Any(t => t.IsKind(SyntaxKind.PartialKeyword))
-                };
+                var isPartial = ((TypeDeclarationSyntax)n.Node).Modifiers
+                    .Any(t => t.IsKind(SyntaxKind.PartialKeyword));
+                return new TypeSymbol((ITypeSymbol)n.SemanticModel.GetDeclaredSymbol(n.Node)!, isPartial);
             });
 
+        // var transformed = returnKinds
+        //     .Select(static (t, _) => new TypeSymbol(t.Type, t.IsPartial))
+        //     .Where(t => t.GetAttributes().Any(Attributes.IsReactiveFactoryAttribute));
+
         var transformed = returnKinds
-            .Select(static (t, _) => new TypeSymbol(t.Type, t.IsPartial))
-            .Where(t => t.GetMethods().Any(Attributes.HasReactiveFactoryAttribute));
+            .Where(t => t.GetAttributes().Any(Attributes.IsReactiveFactoryAttribute));
 
-        var collected = transformed.Collect();
-
-        context.RegisterSourceOutput(collected, static (sourceProductionContext, factories) =>
+        context.RegisterSourceOutput(transformed.Collect(), static (context, factories) =>
         {
-            var log = new CompilationLogProvider(sourceProductionContext);
+            var log = new CompilationLogProvider(context);
             var builder = new FactoryDependencyTreeBuilder(log);
             var writer = new FactoryImplementationWriter(log);
             foreach (var factory in factories)
@@ -44,13 +43,13 @@ public class ReactiveFactoryGenerator : IIncrementalGenerator
                         continue; //Errors will already have been written to log, we can ignore
                     var name = FactoryImplementationWriter.GetName(factory);
                     var result = writer.GenerateCSharp(tree);
-                    sourceProductionContext.AddSource($"{name}.g.cs", SourceText.From(result, Encoding.UTF8));
+                    context.AddSource($"{name}.g.cs", result);
                 }
                 catch (Exception e)
                 {
                     log.WriteError(Location.None,
                         "RI1000",
-                        "Unexpected error generating view model factory",
+                        "Unexpected error generating ViewModel factory implementation",
                         "An unexpected error occurred generating the view model factory '{0}': {1}: {2}",
                         factory,
                         e.GetType(),
@@ -60,4 +59,34 @@ public class ReactiveFactoryGenerator : IIncrementalGenerator
         });
     }
 
+    // private static void Handle(Compilation compilation, IEnumerable<TypeDeclarationSyntax> types, CancellationToken ct)
+    // {
+    //     const string factoryAttributeName = "ReactiveInjection.ReactiveFactoryAttribute";
+    //     var attribute = compilation.GetTypeByMetadataName(factoryAttributeName)
+    //                     ?? throw new Exception($"Unable to get type {factoryAttributeName}");
+    //     foreach (var typeDeclaration in types)
+    //     {
+    //         ct.ThrowIfCancellationRequested();
+    //
+    //         var semanticModel = compilation.GetSemanticModel(typeDeclaration.SyntaxTree);
+    //         var typeSymbol = semanticModel.GetDeclaredSymbol(typeDeclaration);
+    //         if (typeSymbol == null)
+    //             throw new Exception();
+    //
+    //         var attributes = typeSymbol.GetAttributes()
+    //             .Where(attr => attr.AttributeClass != null
+    //                            && attr.AttributeClass.Equals(attribute, SymbolEqualityComparer.Default));
+    //         foreach (var attr in attributes)
+    //         {
+    //             if (attr.ConstructorArguments.Length == 0) 
+    //                 throw new Exception("Attribute has no constructor arguments");
+    //
+    //             var arg = attr.ConstructorArguments[0];
+    //             if (arg.Value is not ITypeSymbol vmType)
+    //                 throw new Exception("Invalid constructor argument");
+    //
+    //             var type = new TypeSymbol(vmType);
+    //         }
+    //     }
+    // }
 }

@@ -1,5 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Reflection;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Shouldly;
 
 namespace ReactiveInjection.Tests.GeneratorTests;
 
@@ -9,12 +11,16 @@ public class GeneratorTests
     [Fact]
     public Task Generate()
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(Source);
-
+        new Tree.Models.ViewModelFactory().ShouldNotBeNull();
+        var syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(Source));
+        
         var compilation = CSharpCompilation.Create(
             assemblyName: "ReactiveInjection.GeneratorTests",
-            references: GetReferences(typeof(FromDIAttribute), typeof(List<int>), typeof(List<int[]>), typeof(IServiceProvider)).ToArray(),
-            syntaxTrees: new[] {syntaxTree});
+            references: GetReferences(typeof(ReactiveFactoryAttribute), typeof(List<int>), typeof(IServiceProvider)),
+            syntaxTrees: new[] {syntaxTree},
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        compilation.GetDiagnostics().ShouldBeEmpty();
 
         var generator = new ReactiveFactoryGenerator();
 
@@ -25,13 +31,20 @@ public class GeneratorTests
         return Verifier.Verify(driver);
     }
     
-    private static readonly string Source = File.ReadAllText(Path.Combine(BaseDirectory, "GeneratorTests/Source.txt"));
+    private static readonly string Source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ViewModels.cs");
 
-    private static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
-
-    private static IEnumerable<MetadataReference> GetReferences(params Type[] types) =>
-        types
-            .Select(t => t.Assembly.Location)
+    private static IEnumerable<MetadataReference> GetReferences(params Type[] types)
+    {
+        var standard = new[]
+        {
+            Assembly.Load("netstandard, Version=2.0.0.0"),
+            Assembly.Load("System.Runtime"),
+            Assembly.Load("System.ObjectModel")
+        };
+        var custom = types.Select(t => t.Assembly);
+            
+        return standard.Concat(custom)
             .Distinct()
-            .Select(r => MetadataReference.CreateFromFile(r));
+            .Select(a => MetadataReference.CreateFromFile(a.Location));
+    }
 }

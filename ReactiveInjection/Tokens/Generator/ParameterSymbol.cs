@@ -16,10 +16,9 @@ internal class ParameterSymbol : IParameter
 
     public IType Type => new TypeSymbol(_source.Type);
 
-    public IAttribute[] GetCustomAttributes() => _source.GetAttributes()
+    public IEnumerable<IAttribute> Attributes => _source.GetAttributes()
         .Where(a => a.AttributeClass != null)
-        .Select(a => (IAttribute) new AttributeSymbol(Location, a))
-        .ToArray();
+        .Select(a => (IAttribute) new AttributeSymbol(Location, a));
 
     public override string ToString() => _source.ToDisplayString();
 }
