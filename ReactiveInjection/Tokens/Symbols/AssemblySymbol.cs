@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace ReactiveInjection.Tokens.Generator;
+namespace ReactiveInjection.Tokens.Symbols;
 
 internal class AssemblySymbol : IAssembly
 {

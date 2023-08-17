@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using FluentAssertions;
-using ReactiveInjection.DependencyTree;
+using ReactiveInjection.Generator;
 using ReactiveInjection.Tests.DependencyTreeTests.Reflection;
 using ReactiveInjection.Tokens;
 using Shouldly;
@@ -21,8 +21,8 @@ public class BuildDependencyTreeTests
     public void GetReflectedType(Type type)
     {
         var t = new ReflectedType(type);
-        t.GetConstructors().ShouldNotBeEmpty();
-        t.GetAttributes().ShouldNotBeEmpty();
+        t.Constructors.ShouldNotBeEmpty();
+        t.Attributes.ShouldNotBeEmpty();
     }
     
     [Fact]
@@ -66,14 +66,10 @@ public class BuildDependencyTreeTests
         var built = builder.Build(new ReflectedType(typeof(ViewModelFactory), true), out var tree);
         log.Errors.ShouldBeEmpty();
         built.ShouldBeTrue();
-        
-        var writer = new FactoryImplementationWriter(log);
 
-        var csharp = writer.GenerateCSharp(tree);
+        var csharp = FactoryImplementationWriter.GenerateCSharp(tree);
 
         csharp.ShouldNotBeNullOrEmpty();
-
-        log.Errors.ShouldBeEmpty();
 
         _output.WriteLine(csharp);
     }

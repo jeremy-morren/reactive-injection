@@ -29,13 +29,13 @@ internal class ReflectedType : ReflectedTokenBase, IType
 
     public bool IsPartial => _isPartial ?? throw new NotImplementedException();
 
-    public IEnumerable<IAttribute> GetAttributes() => _type.GetCustomAttributes(false)
-        .Select(a => (IAttribute)new ReflectedAttribute(a))
-        .ToArray();
+    public bool IsGenericType => _type.IsGenericType;
 
-    public IConstructor[] GetConstructors() => _type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
-        .Select(c => (IConstructor) new ReflectedConstructor(_type, c))
-        .ToArray();
+    public IEnumerable<IAttribute> Attributes => _type.GetCustomAttributes(false)
+        .Select(a => new ReflectedAttribute(a));
+
+    public IEnumerable<IConstructor> Constructors => _type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
+        .Select(c => new ReflectedConstructor(_type, c));
 
     public override string ToString() => CSharpName;
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace ReactiveInjection.Tokens.Generator;
+namespace ReactiveInjection.Tokens.Symbols;
 
 internal static class LocationHelpers
 {

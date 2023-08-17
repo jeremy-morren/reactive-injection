@@ -19,12 +19,14 @@ internal interface IType : IToken, IEquatable<IType>
     public bool IsAbstract { get; }
 
     public bool IsPartial { get; }
+    
+    public bool IsGenericType { get; }
 
     /// <summary>
     /// Gets all attributes applied to a type
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IAttribute> GetAttributes();
+    public IEnumerable<IAttribute> Attributes { get; }
 
     /// <summary>
     /// Searches for all public constructors
@@ -32,7 +34,7 @@ internal interface IType : IToken, IEquatable<IType>
     /// <remarks>
     /// This is the equivalent of  of <c>Type.Constructors(BindingFlags.Public | BindingFlags.Instance)</c>
     /// </remarks>
-    public IConstructor[] GetConstructors();
+    public IEnumerable<IConstructor> Constructors { get; }
 
     /// <summary>
     /// Gets a fully qualified CSharp type name

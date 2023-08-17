@@ -3,7 +3,7 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
 
-namespace ReactiveInjection.DependencyTree;
+namespace ReactiveInjection.Generator;
 
 internal class FactoryDependencyTree
 {

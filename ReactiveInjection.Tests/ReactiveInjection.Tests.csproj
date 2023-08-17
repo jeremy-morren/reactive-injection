@@ -34,13 +34,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="ViewModels.cs">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Include="ViewModels.cs">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
         
-<!--      <None Update="GeneratorTests\GeneratorTests.Generate#treeModelsViewModelFactory.g.verified.cs">-->
-<!--        <DependentUpon>GeneratorTests.cs</DependentUpon>-->
-<!--      </None>-->
+        <None Update="GeneratorTests\GeneratorTests.Generate#Tree.Models.ViewModelFactory.g.verified.cs">
+            <DependentUpon>GeneratorTests.cs</DependentUpon>
+        </None>
     </ItemGroup>
 
 </Project>
