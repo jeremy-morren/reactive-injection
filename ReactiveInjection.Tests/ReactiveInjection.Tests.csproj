@@ -29,18 +29,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ReactiveInjection.Abstractions\ReactiveInjection.Abstractions.csproj" />
         <ProjectReference Include="..\ReactiveInjection\ReactiveInjection.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="ViewModels.cs">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <None Include="DependencyInjection\ViewModels.cs">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        
-        <None Update="GeneratorTests\GeneratorTests.Generate#Tree.Models.ViewModelFactory.g.verified.cs">
-            <DependentUpon>GeneratorTests.cs</DependentUpon>
+        <None Include="ModelInjection\Models.cs">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
 </Project>
