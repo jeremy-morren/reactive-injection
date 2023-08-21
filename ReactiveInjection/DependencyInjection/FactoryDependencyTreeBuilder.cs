@@ -42,8 +42,7 @@ internal class FactoryDependencyTreeBuilder
         
         foreach (var attribute in attributes)
         {
-            if (attribute.Parameter is not IType vmType)
-                throw new Exception("Invalid attribute parameter");
+            var vmType = attribute.TypeParameter;
             if (!vmType.IsReferenceType)
             {
                 _log.ViewModelNotReferenceType(factory, vmType);

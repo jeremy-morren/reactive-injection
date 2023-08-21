@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using ReactiveInjection.DependencyInjection;
+using ReactiveInjection.Symbols;
 
 namespace ReactiveInjection.Framework;
 
@@ -16,16 +17,71 @@ internal static class WriterHelpers
         writer.WriteLine($"#nullable {nullable}");
     }
     
-    public static void WriteClassAttributes(this IndentedWriter writer)
-    {
-        writer.WriteLine($"[global::{typeof(GeneratedCodeAttribute).FullName}(\"ReactiveInjection\", \"{Version}\")]");
-    }
-
-    public static void WriteDebuggerAttributes(this IndentedWriter writer)
+    public static void WriteMethodAttributes(this IndentedWriter writer)
     {
         writer.WriteLine($"[global::{typeof(DebuggerStepThroughAttribute).FullName}()]");
         writer.WriteLine($"[global::{typeof(DebuggerNonUserCodeAttribute).FullName}()]");
     }
 
+    public static void WriteGeneratedCodeAttribute(this IndentedWriter writer)
+    {
+        writer.WriteLine($"[global::{typeof(GeneratedCodeAttribute).FullName}(\"ReactiveInjection\", \"{Version}\")]");
+    }
+
     private static Version Version => typeof(WriterHelpers).Assembly.GetName().Version;
+    
+    /// <summary>
+    /// Writes a one-liner statement i.e. <c>{ content }</c>
+    /// </summary>
+    /// <param name="writer"></param>
+    /// <param name="content"></param>
+    public static void WriteOneLiner(this IndentedWriter writer, string content)
+    {
+        writer.WriteLineThenPush('{');
+        writer.WriteLine(content);
+        writer.PopThenWriteLine('}');
+    }
+    
+    /// <summary>
+    /// Writes an if statement i.e. <c>if (condition) { line; line;  }</c>
+    /// </summary>
+    public static void WriteIfStatement(this IndentedWriter writer, string condition, params string[] lines)
+    {
+        writer.WriteLine($"if ({condition})");
+        writer.WriteLineThenPush('{');
+        foreach (var l in lines)
+            writer.WriteLine(l);
+        writer.PopThenWriteLine('}');
+    }
+
+    public static void WritePartialTypeDefinition(this IndentedWriter writer, IType type)
+    {
+        //Build list of types
+        var types = new List<IType>() { type};
+        var parent = type.ContainingType;
+        while (true)
+        {
+            if (parent == null)
+                break;
+            types.Add(parent);
+            parent = parent.ContainingType;
+        }
+
+        //Write them in reverse
+        types.Reverse();
+        
+        writer.WriteLine($"namespace {types[0].Namespace}");
+        writer.WriteLineThenPush('{');
+        foreach (var p in types)
+        {
+            writer.WriteLine($"partial class {p.Name}");
+            writer.WriteLineThenPush('{');
+        }
+    }
+
+    public static void PopAll(this IndentedWriter writer)
+    {
+        while (writer.CurrentIndentLevel > 0)
+            writer.PopThenWriteLine('}');
+    }
 }

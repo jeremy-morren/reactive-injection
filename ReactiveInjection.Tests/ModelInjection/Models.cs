@@ -30,12 +30,14 @@ public class Model3
 
     public required double Required { get; set; }
     
-    public Model4? Class { get; set; }
+    public Model2? M3ClassProp { get; set; }
 }
 
 public record Model4(int? Constructed)
 {
     public required string OtherProperty { get; set; }
+
+    public Model2? M4ClassProp { get; set; }
 }
 
 public partial class InjectedViewModel1
@@ -58,10 +60,10 @@ public partial class InjectedViewModel2
     [BackingModel] public Model3? Model3 { get; }
 
     public Model4 Other { get; } = null!;
-}
-
-public partial class InjectedViewModel3
-{
-    [BackingModel(nameof(Models.ModelItems.Model3.Class))] 
-    public Model3? Model3 { get; }
+    
+    public partial class InjectedViewModel3
+    {
+        [BackingModel(nameof(Models.ModelItems.Model3.M3ClassProp))] 
+        public Model3? Model3 { get; }
+    }
 }

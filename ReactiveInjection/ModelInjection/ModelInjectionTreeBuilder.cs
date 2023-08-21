@@ -50,10 +50,7 @@ internal class ModelInjectionTreeBuilder
                 continue;
             }
 
-            if (model.Attributes.First(AttributeHelpers.IsBackingModelAttribute).Parameter is not string[] excludeArr)
-                throw new Exception("Invalid attribute parameter");
-
-            var exclude = new HashSet<string>(excludeArr, StringComparer.Ordinal);
+            var exclude = new HashSet<string>(model.Attributes.First(AttributeHelpers.IsBackingModelAttribute).StringParams, StringComparer.Ordinal);
             models.Add(new Model()
             {
                 VmProperty = model,

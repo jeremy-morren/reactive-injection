@@ -19,7 +19,7 @@ public class ModelInjectionTreeTests
     [Theory]
     [InlineData(typeof(InjectedViewModel1))]
     [InlineData(typeof(InjectedViewModel2))]
-    [InlineData(typeof(InjectedViewModel3))]
+    [InlineData(typeof(InjectedViewModel2.InjectedViewModel3))]
     public void BuildDependencyTree(Type viewModel)
     {
         var log = new FakeErrorLog();
@@ -39,7 +39,7 @@ public class ModelInjectionTreeTests
     [Theory]
     [InlineData(typeof(InjectedViewModel1))]
     [InlineData(typeof(InjectedViewModel2))]
-    [InlineData(typeof(InjectedViewModel3))]
+    [InlineData(typeof(InjectedViewModel2.InjectedViewModel3))]
     public void Generate(Type viewModel)
     {
         var log = new FakeErrorLog();

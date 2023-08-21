@@ -23,6 +23,8 @@ internal class ReflectedType : ReflectedTokenBase, IType
 
     public IAssembly Assembly => new ReflectedAssembly(_type.Assembly);
 
+    public IType? ContainingType => _type.DeclaringType != null ? new ReflectedType(_type.DeclaringType) : null;
+
     public string? Namespace => _type.Namespace;
     
     public string Name => _type.Name;

@@ -14,9 +14,9 @@ internal class IndentedWriter
 
     private readonly StringBuilder _builder = new();
 
-    private int _currentIndentLevel = 0;
+    public int CurrentIndentLevel { get; private set; } = 0;
 
-    public string Indent => new (' ', _currentIndentLevel * _indentSize);
+    public string Indent => new (' ', CurrentIndentLevel * _indentSize);
 
     private void WriteIndent()
     {
@@ -45,7 +45,7 @@ internal class IndentedWriter
     /// </summary>
     public void Push()
     {
-        _currentIndentLevel++;
+        CurrentIndentLevel++;
     }
     
     /// <summary>
@@ -53,9 +53,9 @@ internal class IndentedWriter
     /// </summary>
     public void Pop()
     {
-        if (_currentIndentLevel == 0)
+        if (CurrentIndentLevel == 0)
             throw new InvalidOperationException("Indent level is already at 0");
-        _currentIndentLevel--;
+        CurrentIndentLevel--;
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ internal class IndentedWriter
     {
         WriteIndent();
         AppendLine(value);
-        _currentIndentLevel++;
+        CurrentIndentLevel++;
     }
     
     /// <summary>
@@ -75,7 +75,7 @@ internal class IndentedWriter
     {
         WriteIndent();
         AppendLine(value);
-        _currentIndentLevel++;
+        CurrentIndentLevel++;
     }
     
     /// <summary>
@@ -85,7 +85,7 @@ internal class IndentedWriter
     public void WriteLineWithoutIndentAndPush(string value)
     {
         AppendLine(value);
-        _currentIndentLevel++;
+        CurrentIndentLevel++;
     }
     
     /// <summary>
@@ -93,10 +93,10 @@ internal class IndentedWriter
     /// </summary>
     public void WriteRawLineAndPop(string value)
     {
-        if (_currentIndentLevel == 0)
+        if (CurrentIndentLevel == 0)
             throw new InvalidOperationException("Indent level is already at 0");
         AppendLine(value);
-        _currentIndentLevel--;
+        CurrentIndentLevel--;
     }
 
     /// <summary>
@@ -104,9 +104,9 @@ internal class IndentedWriter
     /// </summary>
     public void PopThenWriteLine(string value)
     {
-        if (_currentIndentLevel == 0)
+        if (CurrentIndentLevel == 0)
             throw new InvalidOperationException("Indent level is already at 0");
-        _currentIndentLevel--;
+        CurrentIndentLevel--;
         WriteIndent();
         AppendLine(value);
     }
@@ -116,9 +116,9 @@ internal class IndentedWriter
     /// </summary>
     public void PopThenWriteLine(char value)
     {
-        if (_currentIndentLevel == 0)
+        if (CurrentIndentLevel == 0)
             throw new InvalidOperationException("Indent level is already at 0");
-        _currentIndentLevel--;
+        CurrentIndentLevel--;
         WriteIndent();
         AppendLine(value);
     }

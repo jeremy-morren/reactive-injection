@@ -7,7 +7,12 @@ namespace ReactiveInjection.Symbols;
 internal interface IType : IToken, IEquatable<IType> 
 {
     public IAssembly Assembly { get; }
-    
+
+    /// <summary>
+    /// Gets the containing type (for nested class)
+    /// </summary>
+    public IType? ContainingType { get; }
+
     public string? Namespace { get; }
 
     public string Name { get; }

@@ -17,12 +17,7 @@ internal static class InjectionImplementationWriter
         w.WriteFileHeader("enable");
         
         w.WriteLine("using ReactiveUI;");
-        w.WriteLine($"namespace {tree.ViewModel.Namespace}");
-        w.WriteLineThenPush('{');
-        
-        w.WriteClassAttributes();
-        w.WriteLine($"partial class {tree.ViewModel.Name}");
-        w.WriteLineThenPush('{');
+        w.WritePartialTypeDefinition(tree.ViewModel);
 
         foreach (var model in tree.Models)
         {
@@ -32,18 +27,15 @@ internal static class InjectionImplementationWriter
                 WritableModel(w, model);
         }
         
-        w.PopThenWriteLine('}');
-        w.PopThenWriteLine('}');
+        w.PopAll();
 
         return w.ToString();
     }
 
     private static void VerifyModelNotNull(IndentedWriter writer, Model model)
     {
-        writer.WriteLine($"if (this.{model.Name} == null!)");
-        writer.WriteLineThenPush('{');
-        writer.WriteLine($"throw new InvalidOperationException(\"Backing model {model.Name} is null\");");
-        writer.PopThenWriteLine('}');
+        writer.WriteIfStatement($"this.{model.Name} == null!",
+            $"throw new InvalidOperationException(\"Backing model {model.Name} is null\");");
     }
 
     private static void WriteDocumentation(IndentedWriter writer, IProperty model)
@@ -87,20 +79,24 @@ internal static class InjectionImplementationWriter
             WriteDocumentation(writer, prop);
             if (model.VmProperty.IsNullable)
             {
-                var nullSymbol = !prop.Type.IsNullable ? "?" : null; //Add null symbol if property is not nullable
+                var nullSymbol = !prop.Type.IsNullable || prop.IsNullable ? "?" : null; //Add null symbol if property is not nullable
             
+                writer.WriteGeneratedCodeAttribute();
                 writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
                 
-                writer.WriteDebuggerAttributes();
+                writer.WriteMethodAttributes();
                 writer.WriteLine($"get => this.{model.Name}?.{prop.Name};");
             }
             else
             {
-                writer.WriteLine($"public {prop.Type.CSharpName} {prop.Name}");
+                var nullSymbol = prop.IsNullable ? "?" : null; //Add null symbol if property is nullable
+
+                writer.WriteGeneratedCodeAttribute();
+                writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
             
-                writer.WriteDebuggerAttributes();
+                writer.WriteMethodAttributes();
                 writer.WriteLine("get");
                 writer.WriteLineThenPush('{');
                 VerifyModelNotNull(writer, model);
@@ -158,21 +154,21 @@ internal static class InjectionImplementationWriter
             {
                 WriteDocumentation(writer, prop);
             
-                var nullSymbol = prop.Type.IsNullable ? string.Empty : "?"; //Add null symbol if needed
+                var nullSymbol = !prop.Type.IsNullable && prop.IsNullable ? "?" : null; //Add null symbol if needed
 
+                writer.WriteGeneratedCodeAttribute();
                 writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
                 
-                writer.WriteDebuggerAttributes();
+                writer.WriteMethodAttributes();
                 writer.WriteLine($"get => this.{model.Name}?.{prop.Name};");
 
                 if (prop is { CanWrite: true, IsInitOnly: false })
                 {
-                    writer.WriteDebuggerAttributes();
+                    writer.WriteMethodAttributes();
                     writer.WriteLine("set");
                     writer.WriteLineThenPush('{');
                     writer.WriteLine($"init_{model.Name}();");
-                    writer.WriteLine();
                     WriteSetProperty(writer, model.VmProperty, prop);
                     
                     writer.PopThenWriteLine('}');
@@ -188,10 +184,14 @@ internal static class InjectionImplementationWriter
             {
                 WriteDocumentation(writer, prop);
             
-                writer.WriteLine($"public {prop.Type.CSharpName} {prop.Name}");
+                writer.WriteGeneratedCodeAttribute();
+                
+                var nullSymbol = prop.IsNullable ? "?" : null; //Add null symbol if needed
+
+                writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
                 
-                writer.WriteDebuggerAttributes();
+                writer.WriteMethodAttributes();
                 writer.WriteLine("get");
                 writer.WriteLineThenPush('{');
                 VerifyModelNotNull(writer, model);
@@ -200,7 +200,7 @@ internal static class InjectionImplementationWriter
 
                 if (prop is { CanWrite: true, IsInitOnly: false })
                 {
-                    writer.WriteDebuggerAttributes();
+                    writer.WriteMethodAttributes();
                     writer.WriteLine("set");
                     writer.WriteLineThenPush('{');
 
@@ -234,8 +234,9 @@ internal static class InjectionImplementationWriter
          * this.RaisePropertyChanged("Prop");
          */
         
-        writer.WriteLine($"if ({EqualityComparerEquals(prop.Type)}(this.{model.Name}.{prop.Name}, value)) {{ return; }}");
-
+        
+        writer.WriteIfStatement($"{EqualityComparerEquals(prop.Type)}(this.{model.Name}.{prop.Name}, value)", "return;");
+        
         WritePropertyChanging(writer, prop.Name);
         WritePropertyChanging(writer, model.Name);
         writer.WriteLine($"{model.Name}.{prop.Name} = value;");
@@ -245,12 +246,14 @@ internal static class InjectionImplementationWriter
     
     private static void WriteModelFactory(IndentedWriter writer, IProperty model)
     {
-        writer.WriteDebuggerAttributes();
+        writer.WriteMethodAttributes();
+        writer.WriteGeneratedCodeAttribute();
         writer.WriteLine(EditorBrowsableNever);
         writer.WriteLine(MethodSynchronized);
         writer.WriteLine($"private void init_{model.Name}()");
         writer.WriteLineThenPush('{');
-        writer.WriteLine($"if (this.{model.Name} != null!) {{ return; }}");
+
+        writer.WriteIfStatement($"this.{model.Name} != null", "return;");
         
         //Note: all properties/parameters are 'default!'
         
@@ -292,16 +295,17 @@ internal static class InjectionImplementationWriter
          *   foreach (var prop in changed) { OnPropertyChanged(prop); }
          * }
          */
-        writer.WriteDebuggerAttributes();
+        writer.WriteMethodAttributes();
+        writer.WriteGeneratedCodeAttribute();
         writer.WriteLine(MethodSynchronized);
         writer.WriteLine($"protected void Set{model.Name}({model.CSharpName} value)");
         writer.WriteLineThenPush('{');
 
         if (!model.VmProperty.IsNullable)
-            writer.WriteLine("if (value == null) { throw new ArgumentNullException(\"value\"); }");
+            writer.WriteIfStatement("value == null", "throw new ArgumentNullException(\"value\");");
         
         //If references are equal, then skip
-        writer.WriteLine($"if (object.ReferenceEquals(this.{model.Name}, value)) {{ return; }}");
+        writer.WriteIfStatement($"object.ReferenceEquals(this.{model.Name}, value)", "return;");
         
         //Note: the existing value may be null, so we ignore model nullability from here
 
@@ -325,9 +329,7 @@ internal static class InjectionImplementationWriter
         WritePropertyChanged(writer, model.Name);
 
         writer.WriteLine("foreach (string prop in changed)");
-        writer.WriteLineThenPush('{');
-        writer.WriteLine("this.RaisePropertyChanged(propertyName: prop);");
-        writer.PopThenWriteLine('}');
+        writer.WriteOneLiner("this.RaisePropertyChanged(propertyName: prop);");
 
         writer.PopThenWriteLine('}');
         writer.WriteLine();

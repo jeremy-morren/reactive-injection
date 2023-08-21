@@ -18,6 +18,8 @@ internal class TypeSymbol : IType
 
     public IAssembly Assembly => new AssemblySymbol(_source.ContainingAssembly);
 
+    public IType? ContainingType => _source.ContainingType != null ? new TypeSymbol(_source.ContainingType) : null;
+
     public string? Namespace => _source.ContainingNamespace?.ToString();
 
     public string Name => _source.Name;

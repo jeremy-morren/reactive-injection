@@ -15,19 +15,18 @@ internal class ReflectedAttribute : ReflectedTokenBase, IAttribute
     }
 
     public IType Type => new ReflectedType(_value.GetType());
-    
-    public object? Parameter
+
+    public IType TypeParameter => new ReflectedType((Type)GetProperty());
+
+    public string[] StringParams => (string[])GetProperty();
+
+    private object GetProperty()
     {
-        get
-        {
-            //We just return the first property
-            var prop = _value.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .SingleOrDefault(a => a.Name != "TypeId");
-            var value = prop?.GetValue(_value);
-            if (value is Type t) return new ReflectedType(t);
-            return value;
-        }
+        //We just return the first property
+        var prop = _value.GetType()
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Single(a => a.Name != "TypeId");
+        return prop.GetValue(_value)!;
     }
 
     public override string? ToString() => Type.ToString();

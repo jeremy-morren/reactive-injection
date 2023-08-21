@@ -5,7 +5,12 @@ internal interface IAttribute : IToken
     public IType Type { get; }
 
     /// <summary>
-    /// Gets the first attribute constructor argument
+    /// Gets the first attribute constructor argument from <c>Type type</c>
     /// </summary>
-    public object? Parameter { get; }
+    public IType TypeParameter { get; }
+    
+    /// <summary>
+    /// Gets the constructor argument from <c>params string[] args</c>
+    /// </summary>
+    public string[] StringParams { get; }
 }

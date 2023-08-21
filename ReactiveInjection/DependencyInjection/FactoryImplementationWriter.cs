@@ -15,13 +15,8 @@ internal static class FactoryImplementationWriter
         
         var w = new IndentedWriter();
         w.WriteFileHeader("disable");
-        
-        w.WriteLine($"namespace {tree.FactoryType.Namespace}");
-        w.WriteLineThenPush('{');
 
-        w.WriteClassAttributes();
-        w.WriteLine($"partial class {tree.FactoryType.Name}");
-        w.WriteLineThenPush('{');
+        w.WritePartialTypeDefinition(tree.FactoryType);
 
         var services = new Dictionary<string, string>(); //Map of service type to service field name
         
@@ -47,7 +42,7 @@ internal static class FactoryImplementationWriter
         w.WriteLine();
         
         //Generate DI constructor
-        w.WriteDebuggerAttributes();
+        w.WriteMethodAttributes();
         w.Write($"public {tree.FactoryType.Name}(");
         WriteParameters(w, tree.Services, (t, i) => $"{t.CSharpName} service{i}");
         w.WriteRawLine(')');
@@ -62,7 +57,8 @@ internal static class FactoryImplementationWriter
         {
             w.WriteLine();
             
-            w.WriteDebuggerAttributes();
+            w.WriteMethodAttributes();
+            w.WriteGeneratedCodeAttribute();
             w.Write($"public {vm.Type.CSharpName} {vm.Type.Name}(");
             
             WriteParameters(w, 

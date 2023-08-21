@@ -18,17 +18,33 @@ internal class AttributeSymbol : IAttribute
     public IType Type => new TypeSymbol(
         _source.AttributeClass ?? throw new Exception("Attribute class is null"));
 
-    public object? Parameter
+    public IType TypeParameter
     {
         get
         {
+            
             if (_source.ConstructorArguments.Length == 0) 
                 throw new Exception("Attribute has no constructor arguments");
 
             var arg = _source.ConstructorArguments[0];
-            if (arg.Value is ITypeSymbol type)
-                return new TypeSymbol(type);
-            return arg.Value;
+            if (arg.Value is not ITypeSymbol source)
+                throw new ArgumentException("Invalid attribute parameter");
+            return new TypeSymbol(source);
+        }
+    }
+    
+    public string[] StringParams
+    {
+        get
+        {
+            
+            if (_source.ConstructorArguments.Length == 0) 
+                throw new Exception("Attribute has no constructor arguments");
+
+            var arg = _source.ConstructorArguments[0];
+            if (arg.Kind != TypedConstantKind.Array)
+                throw new ArgumentException("Invalid attribute parameter");
+            return arg.Values.Select(v => (string)v.Value!).ToArray();
         }
     }
 
