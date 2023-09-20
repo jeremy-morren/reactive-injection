@@ -11,10 +11,8 @@ internal static class FactoryImplementationWriter
 {
     public static string GenerateCSharp(FactoryDependencyTree tree)
     {
-        //We are aiming for early C# here
-        
         var w = new IndentedWriter();
-        w.WriteFileHeader("disable");
+        w.WriteFileHeader("enable");
 
         w.WritePartialTypeDefinition(tree.FactoryType);
 
@@ -63,7 +61,11 @@ internal static class FactoryImplementationWriter
             
             WriteParameters(w, 
                 vm.MethodParams,
-                p => $"{p.Type.CSharpName} {p.Name}");
+                p =>
+                {
+                    var nullable = p.Type.IsNullable ? "?" : null;
+                    return $"{p.Type.CSharpName}{nullable} {p.Name}";
+                });
             
             w.WriteRawLine(')');
             w.WriteLineThenPush('{');
