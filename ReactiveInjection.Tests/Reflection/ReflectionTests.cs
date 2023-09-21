@@ -1,5 +1,4 @@
 ﻿using ReactiveInjection.Tests.DependencyInjection;
-using ReactiveInjection.Tests.DependencyInjection.DependencyTreeTests;
 using Shouldly;
 using Tree.Models;
 

@@ -1,5 +1,4 @@
 ﻿using Models.ModelItems;
-using ReactiveInjection.DependencyInjection;
 using ReactiveInjection.ModelInjection;
 using ReactiveInjection.Tests.Reflection;
 using Shouldly;

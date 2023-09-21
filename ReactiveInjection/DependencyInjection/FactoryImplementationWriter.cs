@@ -1,7 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.ComponentModel;
-using System.Diagnostics;
-using ReactiveInjection.Framework;
+﻿using ReactiveInjection.Framework;
 
 // ReSharper disable ConvertIfStatementToReturnStatement
 

@@ -1,5 +1,4 @@
-﻿using ReactiveInjection.DependencyInjection;
-using ReactiveInjection.Framework;
+﻿using ReactiveInjection.Framework;
 using ReactiveInjection.Symbols;
 
 namespace ReactiveInjection.ModelInjection;

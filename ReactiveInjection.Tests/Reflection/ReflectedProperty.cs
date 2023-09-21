@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using ReactiveInjection.Symbols;
-using System.Runtime.CompilerServices;
 
 namespace ReactiveInjection.Tests.Reflection;
 

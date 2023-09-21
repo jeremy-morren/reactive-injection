@@ -1,7 +1,5 @@
 ﻿using System.CodeDom.Compiler;
-using System.ComponentModel;
 using System.Diagnostics;
-using ReactiveInjection.DependencyInjection;
 using ReactiveInjection.Symbols;
 
 namespace ReactiveInjection.Framework;

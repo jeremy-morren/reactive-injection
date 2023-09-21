@@ -1,7 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using ReactiveInjection.DependencyInjection;
 using ReactiveInjection.Framework;
 using ReactiveInjection.Symbols;
 

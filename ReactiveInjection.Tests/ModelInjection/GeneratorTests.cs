@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using ReactiveInjection.DependencyInjection;
 using ReactiveInjection.ModelInjection;
 using Shouldly;
 

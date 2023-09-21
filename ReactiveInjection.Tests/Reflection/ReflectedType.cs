@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Text;
 using ReactiveInjection.Symbols;
-using Xunit.Sdk;
 
 namespace ReactiveInjection.Tests.Reflection;
 
