@@ -26,7 +26,15 @@ internal class TypeSymbol : IType
 
     public string FullName => _source.ToDisplayString();
 
-    public string CSharpName => _source.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+    private NullableFlowState Nullable => _source.NullableAnnotation switch
+    {
+        NullableAnnotation.Annotated => NullableFlowState.MaybeNull,
+        NullableAnnotation.NotAnnotated => NullableFlowState.NotNull,
+        NullableAnnotation.None => NullableFlowState.None,
+        _ => throw new ArgumentOutOfRangeException()
+    };
+    
+    public string CSharpName => _source.ToDisplayString(Nullable, SymbolDisplayFormat.FullyQualifiedFormat);
 
     public bool IsReferenceType => _source.IsReferenceType;
     
