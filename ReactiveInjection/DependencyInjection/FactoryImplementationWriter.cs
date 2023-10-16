@@ -10,6 +10,9 @@ internal static class FactoryImplementationWriter
     {
         var w = new IndentedWriter();
         w.WriteFileHeader("enable");
+        
+        //TODO: Handle generic parameter nullability
+        w.WriteLine("#pragma warning disable CS8620"); //Parameter nullability warning
 
         w.WritePartialTypeDefinition(tree.FactoryType);
 
