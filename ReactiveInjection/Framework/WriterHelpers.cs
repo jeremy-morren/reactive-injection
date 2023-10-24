@@ -1,5 +1,7 @@
 ﻿using System.CodeDom.Compiler;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using ReactiveInjection.Symbols;
 
 namespace ReactiveInjection.Framework;
@@ -19,11 +21,14 @@ internal static class WriterHelpers
     {
         writer.WriteLine($"[global::{typeof(DebuggerStepThroughAttribute).FullName}()]");
         writer.WriteLine($"[global::{typeof(DebuggerNonUserCodeAttribute).FullName}()]");
+        writer.WriteLine($"[global::{typeof(ExcludeFromCodeCoverageAttribute).FullName}]");
     }
-
-    public static void WriteGeneratedCodeAttribute(this IndentedWriter writer)
+    
+    public static void WriteClassAttributes(this IndentedWriter writer, EditorBrowsableState? editorBrowsableState = null)
     {
-        writer.WriteLine($"[global::{typeof(GeneratedCodeAttribute).FullName}(\"ReactiveInjection\", \"{Version}\")]");
+        writer.WriteLine($"[global::{typeof(GeneratedCodeAttribute).FullName}(\"ReactiveInjection.SourceGenerator\", \"{Version}\")]");
+        if (editorBrowsableState.HasValue)
+            writer.WriteLine($"[global::{typeof(EditorBrowsableAttribute).FullName}(global::{typeof(EditorBrowsableState).FullName}.{editorBrowsableState})]");
     }
 
     private static Version Version => typeof(WriterHelpers).Assembly.GetName().Version;
@@ -72,6 +77,7 @@ internal static class WriterHelpers
         writer.WriteLineThenPush('{');
         foreach (var p in types)
         {
+            writer.WriteClassAttributes();
             writer.WriteLine($"partial class {p.Name}");
             writer.WriteLineThenPush('{');
         }

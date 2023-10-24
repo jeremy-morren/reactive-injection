@@ -56,7 +56,7 @@ internal static class FactoryImplementationWriter
             w.WriteLine();
             
             w.WriteMethodAttributes();
-            w.WriteGeneratedCodeAttribute();
+            w.WriteClassAttributes();
             w.Write($"public {vm.Type.CSharpName} {vm.Type.Name}(");
             
             WriteParameters(w, 
