@@ -13,16 +13,13 @@ internal class ReactiveFactoryGenerator : IIncrementalGenerator
         //We run on all changes of 'Type' or 'Constructor'
         
         var returnKinds = context.SyntaxProvider.CreateSyntaxProvider(
-            static (n, _) => n is TypeDeclarationSyntax or ConstructorDeclarationSyntax,
+            static (n, _) => n is TypeDeclarationSyntax,
             static (n, _) =>
             {
-                if (n.Node is ConstructorDeclarationSyntax)
-                    return (IType?)null;
-                
-                return new TypeSymbol((ITypeSymbol)n.SemanticModel.GetDeclaredSymbol(n.Node)!, 
-                    ((TypeDeclarationSyntax)n.Node).IsPartial());
+                var symbol = n.SemanticModel.GetDeclaredSymbol(n.Node);
+                var syntax = (TypeDeclarationSyntax)n.Node;
+                return new TypeSymbol((ITypeSymbol)symbol!, syntax.IsPartial());
             });
-
         
         context.RegisterSourceOutput(returnKinds.Collect(), static (context, types) =>
         {
