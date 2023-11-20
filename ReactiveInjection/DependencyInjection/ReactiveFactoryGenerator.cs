@@ -10,7 +10,7 @@ internal class ReactiveFactoryGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        //We run on all changes of 'Type' or 'Constructor'
+        //We run on all changes of 'Type'
         
         var returnKinds = context.SyntaxProvider.CreateSyntaxProvider(
             static (n, _) => n is TypeDeclarationSyntax,

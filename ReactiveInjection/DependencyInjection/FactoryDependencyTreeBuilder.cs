@@ -33,7 +33,7 @@ internal class FactoryDependencyTreeBuilder
             return false;
         }
         
-        var factories = new List<(ViewModel ViewModel, IType[] Dependencies, IType[] SharedState)>();
+        var factories = new List<(ViewModel ViewModel, List<IType> Services, List<IType> SharedState)>();
 
         var attributes = factory.Attributes.Where(AttributeHelpers.IsReactiveFactoryAttribute).ToArray();
 
@@ -61,10 +61,13 @@ internal class FactoryDependencyTreeBuilder
             if (!ProcessParameters(factory,
                     constructor,
                     out var methodParams,
-                    out var sharedState, 
+                    out var sharedState,
                     out var services))
                 continue;
 
+            services.AddRange(vmType.Properties.Where(AttributeHelpers.HasFromServicesAttribute).Select(p => p.Type));
+            sharedState.AddRange(vmType.Properties.Where(AttributeHelpers.HasSharedStateAttribute).Select(p => p.Type));
+            
             var vm = new ViewModel()
             {
                 Type = vmType,
@@ -80,16 +83,9 @@ internal class FactoryDependencyTreeBuilder
         tree = new FactoryDependencyTree()
         {
             FactoryType = factory,
-            ViewModels = factories.Select(f => f.ViewModel)
-                .ToArray(),
-            Services = factories
-                .SelectMany(f => f.Dependencies)
-                .Distinct()
-                .ToArray(),
-            SharedState = factories
-                .SelectMany(f => f.SharedState)
-                .Distinct()
-                .ToArray(),
+            ViewModels = factories.Select(f => f.ViewModel).ToList(),
+            Services = factories.SelectMany(f => f.Services).Distinct().ToList(),
+            SharedState = factories.SelectMany(f => f.SharedState).Distinct().ToList(),
         };
         return true;
     }
@@ -112,8 +108,8 @@ internal class FactoryDependencyTreeBuilder
     private bool ProcessParameters(IType factoryType,
         IConstructor constructor,
         out IParameter[] methodParams,
-        out IType[] sharedState,
-        out IType[] services)
+        out List<IType> sharedState,
+        out List<IType> services)
     {
         //Services marked with [FromServices]
         //State marked with [SharedState]
@@ -122,7 +118,7 @@ internal class FactoryDependencyTreeBuilder
         services = constructor.Parameters
             .Where(AttributeHelpers.HasFromServicesAttribute)
             .Select(p => p.Type)
-            .ToArray();
+            .ToList();
 
         var sharedStateParams = constructor.Parameters
             .Where(AttributeHelpers.HasSharedStateAttribute)
@@ -153,7 +149,7 @@ internal class FactoryDependencyTreeBuilder
             }
         }
 
-        sharedState = sharedStateParams.Select(p => p.Type).ToArray();
+        sharedState = sharedStateParams.Select(p => p.Type).ToList();
 
         methodParams = constructor.Parameters
             .Where(p => !AttributeHelpers.HasFromServicesAttribute(p)

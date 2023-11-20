@@ -12,17 +12,17 @@ internal class FactoryDependencyTree
     /// <summary>
     /// The view models to generate for this factory
     /// </summary>
-    public required ViewModel[] ViewModels { get; init; }
+    public required IReadOnlyList<ViewModel> ViewModels { get; init; }
 
     /// <summary>
     /// The services required by <see cref="FactoryType"/>.
     /// These will be resolved via DI (i.e. constructor)
     /// </summary>
-    public required IType[] Services { get; init; }
+    public required IReadOnlyList<IType> Services { get; init; }
 
     /// <summary>
     /// The types that are shared between ViewModels i.e. stateful.
     /// These are implemented as fields on <see cref="FactoryType"/>
     /// </summary>
-    public required IType[] SharedState { get; init; }
+    public required IReadOnlyList<IType> SharedState { get; init; }
 }

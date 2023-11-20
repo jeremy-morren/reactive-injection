@@ -12,14 +12,14 @@ internal static class FactoryImplementationWriter
         w.WriteFileHeader("enable");
         
         //TODO: Handle generic parameter nullability
-        w.WriteLine("#pragma warning disable CS8620"); //Parameter nullability warning
+        w.WriteLine("#nullable disable warnings");
 
         w.WritePartialTypeDefinition(tree.FactoryType);
 
         var services = new Dictionary<string, string>(); //Map of service type to service field name
         
         //Create readonly fields for services
-        for (var i= 0; i < tree.Services.Length; i++)
+        for (var i= 0; i < tree.Services.Count; i++)
         {
             var type = tree.Services[i];
             services.Add(type.CSharpName, $"this._service{i}");
@@ -30,7 +30,7 @@ internal static class FactoryImplementationWriter
         
         //Create readonly fields for shared state
         var sharedState = new Dictionary<string, string>();
-        for (var i = 0; i < tree.SharedState.Length; i++)
+        for (var i = 0; i < tree.SharedState.Count; i++)
         {
             var type = tree.SharedState[i];
             sharedState.Add(type.CSharpName, $"this._state{i}");
@@ -45,7 +45,7 @@ internal static class FactoryImplementationWriter
         WriteParameters(w, tree.Services, (t, i) => $"{t.CSharpName} service{i}");
         w.WriteRawLine(')');
         w.WriteLineThenPush('{');
-        for (var i = 0; i < tree.Services.Length; i++)
+        for (var i = 0; i < tree.Services.Count; i++)
             w.WriteLine($"this._service{i} = service{i};");
         w.PopThenWriteLine('}');
         
@@ -90,7 +90,23 @@ internal static class FactoryImplementationWriter
                     return param.Name;
                 });
             
-            w.WriteRawLineAndPop(");");
+            w.WriteRawLine(")");
+            w.WriteLineThenPush('{');
+            
+            //Write properties
+            foreach (var p in vm.Type.Properties)
+            {
+                if (AttributeHelpers.HasFromServicesAttribute(p))
+                    w.WriteLine($"{p.Name} = {services[p.Type.CSharpName]},");
+                if (AttributeHelpers.HasSharedStateAttribute(p))
+                    w.WriteLine($"{p.Name} = {sharedState[p.Type.CSharpName]},");
+                if (p.Type.Equals(tree.FactoryType))
+                    w.WriteLine($"{p.Name} = this,");
+            }
+
+            w.PopThenWriteLine("};");
+            w.Pop();
+            
             w.WriteLine('}');
         }
         
