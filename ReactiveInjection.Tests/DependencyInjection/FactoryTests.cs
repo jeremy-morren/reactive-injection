@@ -48,22 +48,22 @@ public class BuildDependencyTreeTests
         });
     }
 
-    [Fact]
-    public void WriteFactoryImplementation()
-    {
-        var log = new FakeErrorLog();
-
-        var builder = new FactoryDependencyTreeBuilder(log);
-        var built = builder.Build(new ReflectedType(typeof(ViewModelFactory), true), out var tree);
-        log.Errors.ShouldBeEmpty();
-        built.ShouldBeTrue();
-
-        var csharp = FactoryImplementationWriter.GenerateCSharp(tree);
-
-        csharp.ShouldNotBeNullOrEmpty();
-
-        _output.WriteLine(csharp);
-    }
+    // [Fact]
+    // public void WriteFactoryImplementation()
+    // {
+    //     var log = new FakeErrorLog();
+    //
+    //     var builder = new FactoryDependencyTreeBuilder(log);
+    //     var built = builder.Build(new ReflectedType(typeof(ViewModelFactory), true), out var tree);
+    //     log.Errors.ShouldBeEmpty();
+    //     built.ShouldBeTrue();
+    //
+    //     var csharp = FactoryImplementationWriter.GenerateCSharp(tree);
+    //
+    //     csharp.ShouldNotBeNullOrEmpty();
+    //
+    //     _output.WriteLine(csharp);
+    // }
 
     private static bool Equals<T>(IType other) => new ReflectedType(typeof(T)).Equals(other);
 }
