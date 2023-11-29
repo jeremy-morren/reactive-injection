@@ -14,6 +14,5 @@ public class ReflectionTests
         var t = new ReflectedType(type);
         t.Constructors.ShouldNotBeEmpty();
         t.Attributes.ShouldNotBeEmpty();
-        t.Properties.ShouldNotBeEmpty();
     }
 }

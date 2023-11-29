@@ -20,7 +20,7 @@ internal class ModelInjectionGenerator : IIncrementalGenerator
 
                 if (type is not TypeDeclarationSyntax t)
                     return (IType?)null;
-
+                
                 return new TypeSymbol((ITypeSymbol)n.SemanticModel.GetDeclaredSymbol(type)!, t.IsPartial());
             });
 

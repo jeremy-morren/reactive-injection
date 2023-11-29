@@ -56,6 +56,19 @@ namespace Tree.Models
     public class ViewModel6
     {
     }
+
+    public class ViewModel7
+    {
+        public ViewModel7(string param) {}
+        
+        [FromServices]
+        public required Service Service { get; init; }
+        
+        [SharedState]
+        public required object State { get; init; }
+        
+        public required ViewModelFactory Factory { get; init; }
+    }
     
     [ReactiveFactory(typeof(ViewModel1))]
     [ReactiveFactory(typeof(ViewModel2))]
@@ -63,6 +76,7 @@ namespace Tree.Models
     [ReactiveFactory(typeof(ViewModel4))]
     [ReactiveFactory(typeof(ViewModel5))]
     [ReactiveFactory(typeof(ViewModel6))]
+    [ReactiveFactory(typeof(ViewModel7))]
     [Serializable] //Test random attribute
     public partial class ViewModelFactory
     {

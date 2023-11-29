@@ -81,7 +81,7 @@ internal static class InjectionImplementationWriter
             {
                 var nullSymbol = !prop.Type.IsNullable || prop.IsNullable ? "?" : null; //Add null symbol if property is not nullable
             
-                writer.WriteGeneratedCodeAttribute();
+                writer.WriteMethodAttributes();
                 writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
                 
@@ -92,7 +92,7 @@ internal static class InjectionImplementationWriter
             {
                 var nullSymbol = prop.IsNullable ? "?" : null; //Add null symbol if property is nullable
 
-                writer.WriteGeneratedCodeAttribute();
+                writer.WriteMethodAttributes();
                 writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
             
@@ -156,7 +156,7 @@ internal static class InjectionImplementationWriter
             
                 var nullSymbol = !prop.Type.IsNullable && prop.IsNullable ? "?" : null; //Add null symbol if needed
 
-                writer.WriteGeneratedCodeAttribute();
+                writer.WriteClassAttributes();
                 writer.WriteLine($"public {prop.Type.CSharpName}{nullSymbol} {prop.Name}");
                 writer.WriteLineThenPush('{');
                 
@@ -184,7 +184,7 @@ internal static class InjectionImplementationWriter
             {
                 WriteDocumentation(writer, prop);
             
-                writer.WriteGeneratedCodeAttribute();
+                writer.WriteClassAttributes();
                 
                 var nullSymbol = prop.IsNullable ? "?" : null; //Add null symbol if needed
 
@@ -247,7 +247,7 @@ internal static class InjectionImplementationWriter
     private static void WriteModelFactory(IndentedWriter writer, IProperty model)
     {
         writer.WriteMethodAttributes();
-        writer.WriteGeneratedCodeAttribute();
+        writer.WriteClassAttributes();
         writer.WriteLine(EditorBrowsableNever);
         writer.WriteLine(MethodSynchronized);
         writer.WriteLine($"private void init_{model.Name}()");
@@ -296,7 +296,6 @@ internal static class InjectionImplementationWriter
          * }
          */
         writer.WriteMethodAttributes();
-        writer.WriteGeneratedCodeAttribute();
         writer.WriteLine(MethodSynchronized);
         writer.WriteLine($"protected void Set{model.Name}({model.CSharpName} value)");
         writer.WriteLineThenPush('{');
