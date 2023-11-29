@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using ReactiveInjection.DependencyInjection;
+using ReactiveInjection.SourceGenerators.DependencyInjection;
 using Shouldly;
 
 namespace ReactiveInjection.Tests.DependencyInjection.Generator;

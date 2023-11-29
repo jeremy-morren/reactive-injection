@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Collections;
-using ReactiveInjection.Symbols;
+using ReactiveInjection.SourceGenerators.Symbols;
 using ReactiveInjection.Tests.Reflection;
 
-namespace ReactiveInjection.Tests.DependencyInjection.DependencyTreeTests;
+namespace ReactiveInjection.Tests;
 
 internal static class AssertionHelpers
 {

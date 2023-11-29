@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using ReactiveInjection.ModelInjection;
+using ReactiveInjection.SourceGenerators.ModelInjection;
 using Shouldly;
 
 namespace ReactiveInjection.Tests.ModelInjection;
@@ -12,7 +12,7 @@ public class GeneratorTests
     [Fact]
     public Task Generate()
     {
-        new Models.ModelItems.InjectedViewModel1().ShouldNotBeNull();
+        new InjectedViewModel1().ShouldNotBeNull();
         var syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(Source));
 
         var compilation = CSharpCompilation.Create(

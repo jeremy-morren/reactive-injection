@@ -6,17 +6,14 @@
 &lt;/SessionState&gt;</s:String>
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c974b91e_002D11f5_002D40c1_002Db195_002D99c4c42c5bd1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ModelInjectionTreeTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::9FC834D4-5E5C-4878-96B3-B98546D71252::net7.0::ReactiveInjection.Tests.ModelInjection.ModelInjectionTreeTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::9FC834D4-5E5C-4878-96B3-B98546D71252::net7.0::ReactiveInjection.Tests.ModelInjection.GeneratorTests.Generate&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\Users\jerem\repos\Audit\Source\UI\reactive-injection\ReactiveInjection.Tests" Presentation="&amp;lt;ReactiveInjection.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	
 	
 	<s:String x:Key="/Default/Housekeeping/UnitTestingMru/UnitTestRunner/SpawnedProcessesKnownList/=rider64_002Eexe/@EntryIndexedValue">KillOrphaned</s:String>
 	
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=bed08732_002D4190_002D4ad4_002Dad06_002Da7d9dfe3ab8e_0023ReactiveInjection_002ETests_002EGenerator/@EntryIndexedValue">True</s:Boolean>
+	
 	
 	
 	

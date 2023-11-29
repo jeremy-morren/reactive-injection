@@ -1,9 +1,9 @@
 ﻿// ReSharper disable All
 
-using ReactiveInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ReactiveInjection;
 
 namespace Tree.Models
 {
@@ -15,11 +15,11 @@ namespace Tree.Models
     
     public class ViewModel1
     {
-        public ViewModel1([SharedStateAttribute] SharedState sharedState,
+        public ViewModel1([SharedState] SharedState sharedState,
             Model model,
-            [FromServicesAttribute] Service service,
-            [FromServicesAttribute] List<int> values,
-            [FromServicesAttribute] List<int[]> valuesArray)
+            [FromServices] Service service,
+            [FromServices] List<int> values,
+            [FromServices] List<int[]> valuesArray)
         {
         }
     }
@@ -28,8 +28,8 @@ namespace Tree.Models
     {
         public ViewModel2([SharedStateAttribute] SharedState sharedState,
             ViewModelFactory factory,
-            [FromServicesAttribute] Service service,
-            [FromServicesAttribute] IServiceProvider services)
+            [FromServices] Service service,
+            [FromServices] IServiceProvider services)
         {
         }
     }

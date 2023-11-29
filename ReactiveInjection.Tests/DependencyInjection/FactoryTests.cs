@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using FluentAssertions;
-using ReactiveInjection.DependencyInjection;
-using ReactiveInjection.Symbols;
-using ReactiveInjection.Tests.DependencyInjection.DependencyTreeTests;
+using ReactiveInjection.SourceGenerators.DependencyInjection;
+using ReactiveInjection.SourceGenerators.Symbols;
 using ReactiveInjection.Tests.Reflection;
 using Shouldly;
 using Tree.Models;

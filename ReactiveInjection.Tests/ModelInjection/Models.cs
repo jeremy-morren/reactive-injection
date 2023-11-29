@@ -3,9 +3,7 @@
 
 #nullable enable
 
-using ReactiveInjection;
-
-namespace Models.ModelItems;
+namespace ReactiveInjection.Tests.ModelInjection;
 
 
 public record Model1(int Int)
@@ -63,7 +61,7 @@ public partial class InjectedViewModel2
     
     public partial class InjectedViewModel3
     {
-        [BackingModel(nameof(Models.ModelItems.Model3.M3ClassProp))] 
+        [BackingModel(nameof(ModelInjection.Model3.M3ClassProp))] 
         public Model3? Model3 { get; }
     }
 }

@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ReactiveInjection.SourceGenerators\ReactiveInjection.SourceGenerators.csproj" />
         <ProjectReference Include="..\ReactiveInjection\ReactiveInjection.csproj" />
     </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
-using ReactiveInjection.Symbols;
+using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.Tests.Reflection;
 

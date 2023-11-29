@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using ReactiveInjection.Symbols;
+using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.Tests.Reflection;
 

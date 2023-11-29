@@ -1,5 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
-using ReactiveInjection.Framework;
+using ReactiveInjection.SourceGenerators.Framework;
 
 // ReSharper disable ReturnTypeCanBeEnumerable.Global
 

@@ -1,5 +1,4 @@
-﻿using Models.ModelItems;
-using ReactiveInjection.ModelInjection;
+﻿using ReactiveInjection.SourceGenerators.ModelInjection;
 using ReactiveInjection.Tests.Reflection;
 using Shouldly;
 using Xunit.Abstractions;
