@@ -6,7 +6,7 @@
 &lt;/SessionState&gt;</s:String>
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c974b91e_002D11f5_002D40c1_002Db195_002D99c4c42c5bd1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ModelInjectionTreeTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Project Location="C:\Users\jerem\repos\Audit\Source\UI\reactive-injection\ReactiveInjection.Tests" Presentation="&amp;lt;ReactiveInjection.Tests&amp;gt;" /&gt;&#xD;
+  &lt;Project Location="C:\Users\jerem\repos\Extrusion\Source\UI\reactive-injection\ReactiveInjection.Tests" Presentation="&amp;lt;ReactiveInjection.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	

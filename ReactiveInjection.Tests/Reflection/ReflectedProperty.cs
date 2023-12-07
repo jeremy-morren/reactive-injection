@@ -3,14 +3,9 @@ using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.Tests.Reflection;
 
-internal class ReflectedProperty : ReflectedTokenBase, IProperty
+internal class ReflectedProperty(PropertyInfo source) : ReflectedTokenBase, IProperty
 {
-    private readonly PropertyInfo _source;
-
-    public ReflectedProperty(PropertyInfo source)
-    {
-        _source = source ?? throw new ArgumentNullException(nameof(source));
-    }
+    private readonly PropertyInfo _source = source ?? throw new ArgumentNullException(nameof(source));
 
     public string Name => _source.Name;
 

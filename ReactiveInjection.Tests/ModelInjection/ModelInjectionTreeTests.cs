@@ -5,15 +5,8 @@ using Xunit.Abstractions;
 
 namespace ReactiveInjection.Tests.ModelInjection;
 
-public class ModelInjectionTreeTests
+public class ModelInjectionTreeTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public ModelInjectionTreeTests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
-
     [Theory]
     [InlineData(typeof(InjectedViewModel1))]
     [InlineData(typeof(InjectedViewModel2))]
@@ -53,6 +46,6 @@ public class ModelInjectionTreeTests
 
         csharp.ShouldNotBeNullOrWhiteSpace();
 
-        _output.WriteLine(csharp);
+        output.WriteLine(csharp);
     }
 }

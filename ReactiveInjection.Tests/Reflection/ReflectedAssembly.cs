@@ -3,11 +3,9 @@ using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.Tests.Reflection;
 
-internal class ReflectedAssembly : IAssembly
+internal class ReflectedAssembly(Assembly assembly) : IAssembly
 {
-    private readonly Assembly _assembly;
-
-    public ReflectedAssembly(Assembly assembly) => _assembly = assembly;
+    private readonly Assembly _assembly = assembly;
 
     public string Name => _assembly.GetName().Name!;
 

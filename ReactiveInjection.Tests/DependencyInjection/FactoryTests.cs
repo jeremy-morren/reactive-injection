@@ -9,12 +9,10 @@ using Xunit.Abstractions;
 
 namespace ReactiveInjection.Tests.DependencyInjection;
 
-public class BuildDependencyTreeTests
+public class BuildDependencyTreeTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
+    private readonly ITestOutputHelper _output = output;
 
-    public BuildDependencyTreeTests(ITestOutputHelper output) => _output = output;
-    
     [Fact]
     public void BuildDependencyTree()
     {

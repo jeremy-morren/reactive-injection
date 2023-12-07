@@ -3,23 +3,15 @@ using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.Tests.Reflection;
 
-internal class ReflectedParameter : ReflectedTokenBase, IParameter
+internal class ReflectedParameter(int position, ParameterInfo param) : ReflectedTokenBase, IParameter
 {
-    private readonly ParameterInfo _param;
-
-    public ReflectedParameter(int position, ParameterInfo param)
-    {
-        Ordinal = position;
-        _param = param;
-    }
-
-    public string Name => _param.Name!;
+    public string Name => param.Name!;
     
-    public int Ordinal { get; }
+    public int Ordinal { get; } = position;
 
-    public IType Type => new ReflectedType(_param.ParameterType);
+    public IType Type => new ReflectedType(param.ParameterType);
 
-    public IEnumerable<IAttribute> Attributes => _param.GetCustomAttributes()
+    public IEnumerable<IAttribute> Attributes => param.GetCustomAttributes()
         .Select(a => (IAttribute) new ReflectedAttribute(a))
         .ToArray();
 

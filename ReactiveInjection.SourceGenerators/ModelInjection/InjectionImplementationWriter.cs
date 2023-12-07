@@ -42,7 +42,10 @@ internal static class InjectionImplementationWriter
     {
         if (string.IsNullOrEmpty(model.DocumentationXml)) return;
         
-        var doc = model.DocumentationXml!.Replace(Environment.NewLine, $"\n{writer.Indent}///");
+        var doc = model.DocumentationXml!
+            .Replace("\r", string.Empty)
+            .Replace("\n", $"\n{writer.Indent}///");
+        
         writer.WriteRawLine($"\n{writer.Indent}///{doc}");
     }
     

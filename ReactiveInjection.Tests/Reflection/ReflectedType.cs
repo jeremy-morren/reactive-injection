@@ -5,20 +5,13 @@ using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.Tests.Reflection;
 
-internal class ReflectedType : ReflectedTokenBase, IType
+internal class ReflectedType(
+    Type type,
+    bool? isPartial = null,
+    bool? isNullable = null)
+    : ReflectedTokenBase, IType
 {
-    private readonly Type _type;
-    private readonly bool? _isPartial;
-    private readonly bool? _isNullable;
-
-    public ReflectedType(Type type, 
-        bool? isPartial = null,
-        bool? isNullable = null)
-    {
-        _type = type;
-        _isPartial = isPartial;
-        _isNullable = isNullable;
-    }
+    private readonly Type _type = type;
 
     public IAssembly Assembly => new ReflectedAssembly(_type.Assembly);
 
@@ -34,11 +27,11 @@ internal class ReflectedType : ReflectedTokenBase, IType
     
     public bool IsAbstract => _type.IsAbstract;
 
-    public bool IsPartial => _isPartial ?? throw new NotImplementedException($"{nameof(_isPartial)} not set");
+    public bool IsPartial => isPartial ?? throw new NotImplementedException($"{nameof(isPartial)} not set");
 
     public bool IsGenericType => _type.IsGenericType;
 
-    public bool IsNullable => _isNullable ?? throw new NotImplementedException($"{nameof(_isNullable)} not set");
+    public bool IsNullable => isNullable ?? throw new NotImplementedException($"{nameof(isNullable)} not set");
 
     public IEnumerable<IAttribute> Attributes => _type.GetCustomAttributes(false)
         .Select(a => new ReflectedAttribute(a));
