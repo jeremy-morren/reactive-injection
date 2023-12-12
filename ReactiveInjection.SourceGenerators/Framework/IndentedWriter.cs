@@ -16,7 +16,7 @@ internal class IndentedWriter
 
     public int CurrentIndentLevel { get; private set; } = 0;
 
-    public string Indent => new (' ', CurrentIndentLevel * _indentSize);
+    private string Indent => new (' ', CurrentIndentLevel * _indentSize);
 
     private void WriteIndent()
     {

@@ -37,8 +37,5 @@
         <None Include="DependencyInjection\ViewModels.cs">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Include="ModelInjection\Models.cs">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 </Project>
