@@ -6,7 +6,6 @@ using Shouldly;
 
 namespace ReactiveInjection.Tests.DependencyInjection.Generator;
 
-[UsesVerify]
 public class GeneratorTests
 {
     [Fact]
