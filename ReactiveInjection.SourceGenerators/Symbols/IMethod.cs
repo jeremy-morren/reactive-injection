@@ -7,6 +7,13 @@ internal interface IMethod : IToken
 {
     public string Name { get; }
     
+    public bool IsStatic { get; }
+    
+    /// <summary>
+    /// Whether the method is a public method
+    /// </summary>
+    public bool IsPublic { get; }
+    
     /// <summary>
     /// Gets the method return type, or null if <c>void</c>
     /// </summary>

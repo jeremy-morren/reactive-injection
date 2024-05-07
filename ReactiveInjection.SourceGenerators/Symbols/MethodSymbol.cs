@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using ReactiveInjection.SourceGenerators.Framework;
 
 namespace ReactiveInjection.SourceGenerators.Symbols;
 
@@ -6,15 +7,18 @@ internal class MethodSymbol : IMethod
 {
     private readonly IMethodSymbol _source;
     
-    public MethodSymbol(ISymbol symbol)
+    public MethodSymbol(IMethodSymbol source)
     {
-        if (symbol is not IMethodSymbol m)
-            throw new ArgumentOutOfRangeException(nameof(symbol));
-        _source = m;
+        if (source.MethodKind != MethodKind.Ordinary)
+            throw new ArgumentOutOfRangeException(nameof(source));
+        _source = source;
     }
 
     public Location Location => _source.Locations.GetLocation();
     public string Name => _source.Name;
+    public bool IsStatic => _source.IsStatic;
+    public bool IsPublic => _source.DeclaredAccessibility.IsPublic();
+    
     public IType? ReturnType => _source.ReturnsVoid ? null : new TypeSymbol(_source.ReturnType);
 
     public IEnumerable<IParameter> Parameters => _source.Parameters

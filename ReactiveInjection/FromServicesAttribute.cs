@@ -6,8 +6,5 @@
 /// <remarks>
 /// The service is injected via the view model factory constructor
 /// </remarks>
-[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
-public sealed class FromServicesAttribute : Attribute
-{
-    
-}
+[AttributeUsage(AttributeTargets.Parameter)]
+public sealed class FromServicesAttribute : Attribute;

@@ -6,6 +6,8 @@ namespace ReactiveInjection.Tests.Reflection;
 internal class ReflectedMethod(MethodInfo method) : ReflectedTokenBase, IMethod
 {
     public string Name => method.Name;
+    public bool IsStatic => method.IsStatic;
+    public bool IsPublic => method.IsPublic;
     public IType? ReturnType => method.ReturnType == typeof(void) ? null : new ReflectedType(method.ReturnType);
     
     public IEnumerable<IParameter> Parameters => method.GetParameters()

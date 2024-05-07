@@ -1,6 +1,6 @@
 ﻿using ReactiveInjection.SourceGenerators.Symbols;
 
-namespace ReactiveInjection.SourceGenerators.DependencyInjection;
+namespace ReactiveInjection.SourceGenerators.DependencyInjection.Models;
 
 internal class FactoryDependencyTree
 {
@@ -10,7 +10,7 @@ internal class FactoryDependencyTree
     public required IType FactoryType { get; init; }
 
     /// <summary>
-    /// The view models to generate for this factory
+    /// The view models to generate methods for
     /// </summary>
     public required IReadOnlyList<ViewModel> ViewModels { get; init; }
 

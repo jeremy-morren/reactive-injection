@@ -34,6 +34,8 @@ internal interface IType : IToken, IEquatable<IType>
     public bool IsGenericType { get; }
 
     public bool IsNullable { get; }
+    
+    public IEnumerable<IType> GenericArguments { get; }
 
     /// <summary>
     /// Gets all attributes applied to a type
@@ -50,4 +52,9 @@ internal interface IType : IToken, IEquatable<IType>
     public IEnumerable<IConstructor> Constructors { get; }
     
     public IEnumerable<IProperty> Properties { get; }
+    
+    /// <summary>
+    /// Public methods
+    /// </summary>
+    public IEnumerable<IMethod> Methods { get; }
 }

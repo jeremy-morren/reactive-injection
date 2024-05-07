@@ -1,8 +1,9 @@
-﻿using ReactiveInjection.SourceGenerators.Framework;
+﻿using ReactiveInjection.SourceGenerators.DependencyInjection.Models;
+using ReactiveInjection.SourceGenerators.Framework;
 using ReactiveInjection.SourceGenerators.Symbols;
 
+// ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable InvertIf
-
 // ReSharper disable MemberCanBeMadeStatic.Global
 
 namespace ReactiveInjection.SourceGenerators.DependencyInjection;
@@ -32,12 +33,20 @@ internal class FactoryDependencyTreeBuilder
             _log.FactoryIsGenericType(factory);
             return false;
         }
-        
-        var factories = new List<(ViewModel ViewModel, List<IType> Services, List<IType> SharedState)>();
+
+        var viewModels = new List<(ViewModel ViewModel, List<IType> SharedState, List<IType> Services)>();
 
         var attributes = factory.Attributes.Where(AttributeHelpers.IsReactiveFactoryAttribute).ToArray();
 
-        //TODO: Error on duplicate types
+        var duplicates = attributes.Duplicates(a => a.TypeParameter).ToList();
+
+        if (duplicates.Count > 0)
+        {
+            foreach (var t in duplicates)
+                _log.DuplicateViewModel(factory, t);
+            return false;
+        }
+
         //TODO: Error on different types with same name
         
         foreach (var attribute in attributes)
@@ -54,38 +63,57 @@ internal class FactoryDependencyTreeBuilder
                 _log.ViewModelIsAbstract(factory, vmType);
                 continue;
             }
-            
-            if (!GetConstructor(factory, vmType, out var constructor))
-                continue;
 
-            if (!ProcessParameters(factory,
-                    constructor,
+            //Add constructor method
+            if (GetConstructor(factory, vmType, out var constructor)
+                && ProcessMethod(factory, 
+                    constructor.Parameters.ToList(),
                     out var methodParams,
                     out var sharedState,
                     out var services))
-                continue;
-
-            services.AddRange(vmType.Properties.Where(AttributeHelpers.HasFromServicesAttribute).Select(p => p.Type));
-            sharedState.AddRange(vmType.Properties.Where(AttributeHelpers.HasSharedStateAttribute).Select(p => p.Type));
-            
-            var vm = new ViewModel()
             {
-                Type = vmType,
-                MethodParams = methodParams,
-                Constructor = constructor
-            };
-            factories.Add((vm, services, sharedState));
+                var vm = new ConstructorViewModel()
+                {
+                    Type = vmType,
+                    MethodParams = methodParams,
+                    Constructor = constructor
+                };
+                viewModels.Add((vm, sharedState, services));
+            }
+
+            //Add Load methods
+            foreach (var method in vmType.Methods)
+            {
+                if (!method.IsPublic || !method.IsStatic || !method.Name.StartsWith("Load"))
+                    continue;
+                if (method.ReturnType == null || !method.ReturnType.IsTask())
+                {
+                    _log.IncorrectLoaderSignature(factory, method);
+                    continue;
+                }
+                if (ProcessMethod(factory, 
+                    method.Parameters.ToList(),
+                    out methodParams,
+                    out sharedState,
+                    out services))
+                {
+                    var vm = new LoaderViewModel()
+                    {
+                        Type = vmType,
+                        Method = method,
+                        MethodParams = methodParams,
+                    };
+                    viewModels.Add((vm, sharedState, services));
+                }
+            }
         }
-        
-        if (attributes.Length != factories.Count)
-            return false;
         
         tree = new FactoryDependencyTree()
         {
             FactoryType = factory,
-            ViewModels = factories.Select(f => f.ViewModel).ToList(),
-            Services = factories.SelectMany(f => f.Services).Distinct().ToList(),
-            SharedState = factories.SelectMany(f => f.SharedState).Distinct().ToList(),
+            ViewModels = viewModels.Select(f => f.ViewModel).ToList(),
+            Services = viewModels.SelectMany(f => f.Services).Distinct().ToList(),
+            SharedState = viewModels.SelectMany(f => f.SharedState).Distinct().ToList(),
         };
         return true;
     }
@@ -94,19 +122,23 @@ internal class FactoryDependencyTreeBuilder
     {
         //TODO: Support [ActivatorUtilitiesConstructor] attribute
         
-        var constructors = viewModel.Constructors.ToList();
-        if (constructors.Count == 1)
-        {
-            constructor = constructors[0];
-            return true;
-        }
-        _log.MultipleConstructorsDefined(factory, viewModel);
         constructor = null!;
-        return false;
+        var constructors = viewModel.Constructors.Where(c => c.IsPublic).ToList();
+        switch (constructors.Count)
+        {
+            case 1:
+                constructor = constructors[0];
+                return true;
+            case 0:
+                return false;
+            default:
+                _log.MultipleConstructorsDefined(factory, viewModel);
+                return false;
+        }
     }
 
-    private bool ProcessParameters(IType factoryType,
-        IConstructor constructor,
+    private bool ProcessMethod(IType viewModel,
+        List<IParameter> parameters,
         out IParameter[] methodParams,
         out List<IType> sharedState,
         out List<IType> services)
@@ -115,12 +147,12 @@ internal class FactoryDependencyTreeBuilder
         //State marked with [SharedState]
         
         //TODO: check services are reference types
-        services = constructor.Parameters
+        services = parameters
             .Where(AttributeHelpers.HasFromServicesAttribute)
             .Select(p => p.Type)
             .ToList();
 
-        var sharedStateParams = constructor.Parameters
+        var sharedStateParams = parameters
             .Where(AttributeHelpers.HasSharedStateAttribute)
             .ToArray();
 
@@ -129,13 +161,13 @@ internal class FactoryDependencyTreeBuilder
         {
             if (!param.Type.IsReferenceType)
             {
-                _log.StateNotReferenceType(constructor, param);
+                _log.StateNotReferenceType(viewModel, param);
                 validState = false;
                 continue;
             }
             if (param.Type.IsAbstract)
             {
-                _log.StateIsAbstractType(constructor, param);
+                _log.StateIsAbstractType(viewModel, param);
                 validState = false;
                 continue;
             }
@@ -143,7 +175,7 @@ internal class FactoryDependencyTreeBuilder
             //Ensure it has a parameterless constructor
             if (!param.Type.Constructors.Any() || param.Type.Constructors.All(c => c.Parameters.Any()))
             {
-                _log.StateHasNoParameterlessConstructor(constructor, param);
+                _log.StateHasNoParameterlessConstructor(viewModel, param);
                 validState = false;
                 continue;
             }
@@ -151,10 +183,11 @@ internal class FactoryDependencyTreeBuilder
 
         sharedState = sharedStateParams.Select(p => p.Type).ToList();
 
-        methodParams = constructor.Parameters
+        methodParams = parameters
             .Where(p => !AttributeHelpers.HasFromServicesAttribute(p)
                         && !AttributeHelpers.HasSharedStateAttribute(p)
-                        && !p.Type.Equals(factoryType))
+                        && !p.Type.Equals(viewModel)
+                        && !p.Type.IsCancellationToken())
             .ToArray();
         
         return validState;

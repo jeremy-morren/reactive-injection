@@ -23,16 +23,4 @@ internal static class AttributeHelpers
 
     public static bool HasSharedStateAttribute(IParameter parameter) =>
         parameter.Attributes.Any(IsSharedStateAttribute);
-
-    public static bool HasFromServicesAttribute(IProperty property) =>
-        property.Attributes.Any(IsFromServicesAttribute);
-
-    public static bool HasSharedStateAttribute(IProperty property) =>
-        property.Attributes.Any(IsSharedStateAttribute);
-    
-    public static bool HasBackingModelAttribute(IProperty property) => 
-        property.Attributes.Any(IsBackingModelAttribute);
-    
-    public static bool IsBackingModelAttribute(IAttribute attribute) => 
-        IsType(attribute, "BackingModelAttribute");
 }

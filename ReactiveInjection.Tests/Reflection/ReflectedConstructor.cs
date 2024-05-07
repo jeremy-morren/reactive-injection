@@ -6,6 +6,7 @@ namespace ReactiveInjection.Tests.Reflection;
 internal class ReflectedConstructor(Type declaringType, ConstructorInfo source) : ReflectedTokenBase, IConstructor
 {
     public IType ContainingType => new ReflectedType(declaringType);
+    public bool IsPublic => source.IsPublic;
 
     public IEnumerable<IAttribute> Attributes => source.GetCustomAttributes(true)
         .Select(a => new ReflectedAttribute(a));

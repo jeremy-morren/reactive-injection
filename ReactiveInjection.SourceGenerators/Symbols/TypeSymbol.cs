@@ -7,8 +7,7 @@ internal class TypeSymbol : IType
     private readonly ITypeSymbol _source;
     private readonly bool? _isPartial;
 
-    public TypeSymbol(ITypeSymbol source, 
-        bool? isPartial = null)
+    public TypeSymbol(ITypeSymbol source, bool? isPartial = null)
     {
         _source = source;
         _isPartial = isPartial;
@@ -45,17 +44,26 @@ internal class TypeSymbol : IType
     public bool IsGenericType => _source is INamedTypeSymbol { IsGenericType: true };
     
     public bool IsNullable => _source.NullableAnnotation == NullableAnnotation.Annotated;
+    public IEnumerable<IType> GenericArguments => _source is INamedTypeSymbol { IsGenericType: true} s
+        ? s.TypeArguments.Select(t => new TypeSymbol(t))
+        : Enumerable.Empty<IType>();
 
     public IEnumerable<IAttribute> Attributes => _source.GetAttributes()
         .Select(a => new AttributeSymbol(Location, a));
 
     public IEnumerable<IConstructor> Constructors => _source.GetMembers()
-        .Where(s => s is IMethodSymbol { MethodKind: MethodKind.Constructor })
+        .OfType<IMethodSymbol>()
+        .Where(s => s.MethodKind == MethodKind.Constructor)
         .Select(m => new ConstructorSymbol(m));
 
-    public IEnumerable<IProperty> Properties => _source.GetMembers()
-        .Where(s => s is IPropertySymbol)
-        .Select(p => new PropertySymbol((IPropertySymbol)p));
+    public IEnumerable<IProperty> Properties => 
+        _source.GetMembers().OfType<IPropertySymbol>().Select(p => new PropertySymbol(p));
+
+    public IEnumerable<IMethod> Methods =>
+        _source.GetMembers()
+            .OfType<IMethodSymbol>()
+            .Where(m => m.MethodKind == MethodKind.Ordinary)
+            .Select(s => new MethodSymbol(s));
 
     public override string ToString() => _source.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
 

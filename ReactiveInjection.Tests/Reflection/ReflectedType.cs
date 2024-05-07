@@ -32,6 +32,7 @@ internal class ReflectedType(
     public bool IsGenericType => _type.IsGenericType;
 
     public bool IsNullable => isNullable ?? throw new NotImplementedException($"{nameof(isNullable)} not set");
+    public IEnumerable<IType> GenericArguments => _type.GetGenericArguments().Select(t => new ReflectedType(t));
 
     public IEnumerable<IAttribute> Attributes => _type.GetCustomAttributes(false)
         .Select(a => new ReflectedAttribute(a));
@@ -39,18 +40,15 @@ internal class ReflectedType(
     public IEnumerable<IConstructor> Constructors => _type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
         .Select(c => new ReflectedConstructor(_type, c));
 
-    public IEnumerable<IProperty> Properties
+    public IEnumerable<IProperty> Properties => Get(_type.GetProperties).Select(p => new ReflectedProperty(p));
+
+    public IEnumerable<IMethod> Methods => Get(_type.GetMethods).Select(m => new ReflectedMethod(m));
+
+    private static IEnumerable<T> Get<T>(Func<BindingFlags, IEnumerable<T>> get)
     {
-        get
-        {
-            var instance = _type
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            
-            var @static = _type
-                .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                
-            return instance.Concat(@static).Select(p => new ReflectedProperty(p));
-        }
+
+        return get(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) //Instance
+            .Concat(get(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)); //Static
     }
 
     public override string ToString() => CSharpName;

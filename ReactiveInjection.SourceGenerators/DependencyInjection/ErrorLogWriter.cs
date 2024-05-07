@@ -38,6 +38,15 @@ internal class ErrorLogWriter
             factory);
     }
     
+    public void DuplicateViewModel(IType factory, IType viewModel)
+    {
+        _log.WriteError(factory.Location,
+            "RI1012",
+            "Duplicate ViewModel type",
+            "ViewModel factory '{0}' has duplicate ViewModel type '{1}'",
+            factory, viewModel);
+    }
+    
     public void ViewModelNotReferenceType(IType factory, IType viewModel)
     {
         _log.WriteError(factory.Location,
@@ -68,33 +77,39 @@ internal class ErrorLogWriter
             factory);
     }
     
-    public void StateNotReferenceType(IConstructor constructor, IParameter parameter)
+    public void StateNotReferenceType(IType viewModel, IParameter parameter)
     {
         _log.WriteError(parameter.Location,
             "RI1031",
             "Shared state must be reference type",
             "Shared state '{0}' on ViewModel '{1}': shared state must be reference type",
-            parameter.Type,
-            constructor.ContainingType);
+            parameter.Type, viewModel);
     }
     
-    public void StateIsAbstractType(IConstructor constructor, IParameter parameter)
+    public void StateIsAbstractType(IType viewModel, IParameter parameter)
     {
         _log.WriteError(parameter.Location,
             "RI1032",
             "Shared state cannot be abstract type",
             "Shared state '{0}' on ViewModel '{1}': shared state cannot be abstract type",
-            parameter.Type,
-            constructor.ContainingType);
+            parameter.Type, viewModel);
     }
     
-    public void StateHasNoParameterlessConstructor(IConstructor constructor, IParameter parameter)
+    public void StateHasNoParameterlessConstructor(IType viewModel, IParameter parameter)
     {
         _log.WriteError(parameter.Location,
             "RI1033",
             "Shared state type must have parameterless constructor defined",
             "Shared state '{0}' on ViewModel '{1}' has no parameterless constructor",
-            parameter.Type,
-            constructor.ContainingType);
+            parameter.Type, viewModel);
+    }
+
+    public void IncorrectLoaderSignature(IType viewModel, IMethod method)
+    {
+        _log.WriteError(method.Location,
+            "RI1040",
+            "Incorrect loader method signature",
+            "Loader '{0}' on ViewModel '{1}' must return Task<T> where T is the ViewModel type",
+            method, viewModel);
     }
 }

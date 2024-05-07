@@ -8,6 +8,8 @@ internal interface IConstructor : IToken
     /// </summary>
     IType ContainingType { get; }
     
+    bool IsPublic { get; }
+    
     IEnumerable<IAttribute> Attributes { get; }
     IEnumerable<IParameter> Parameters { get; }
 }

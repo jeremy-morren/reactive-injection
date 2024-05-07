@@ -12,8 +12,6 @@ internal class ParameterSymbol : IParameter
 
     public string Name => _source.Name;
 
-    public int Ordinal => _source.Ordinal;
-
     public IType Type => new TypeSymbol(_source.Type);
 
     public IEnumerable<IAttribute> Attributes => _source.GetAttributes()

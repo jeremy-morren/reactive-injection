@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using ReactiveInjection.SourceGenerators.DependencyInjection;
 using Shouldly;
 
-namespace ReactiveInjection.Tests.DependencyInjection.Generator;
+namespace ReactiveInjection.Tests.DependencyInjection;
 
 public class GeneratorTests
 {
@@ -16,7 +16,8 @@ public class GeneratorTests
         
         var compilation = CSharpCompilation.Create(
             assemblyName: "ReactiveInjection.GeneratorTests",
-            references: GetReferences(typeof(ReactiveFactoryAttribute), typeof(List<int>), typeof(IServiceProvider)),
+            references: GetReferences(typeof(ReactiveFactoryAttribute), 
+                typeof(List<int>), typeof(IServiceProvider)),
             syntaxTrees: new[] {syntaxTree},
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
