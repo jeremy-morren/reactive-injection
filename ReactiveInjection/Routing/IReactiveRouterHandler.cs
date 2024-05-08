@@ -1,4 +1,5 @@
-﻿namespace ReactiveInjection.Routing;
+﻿// ReSharper disable ParameterTypeCanBeEnumerable.Global
+namespace ReactiveInjection.Routing;
 
 public interface IReactiveRouterHandler
 {
@@ -8,22 +9,27 @@ public interface IReactiveRouterHandler
     public TimeSpan LoadTimeout { get; }
     
     /// <summary>
-    /// Handle when a loader matches a route
+    /// Invoked when a path is matched to a loader
     /// </summary>
-    void Matched(string route, ReactiveViewModelLoader loader);
+    void Matched(string path, ReactiveViewModelLoader loader);
     
     /// <summary>
-    /// Handle when no loader matches a route
+    /// Invoked after a loader has successfully loaded a view model
     /// </summary>
-    void NotFound(string route);
+    void Loaded(string path, ReactiveViewModelLoader loader, TimeSpan elapsed);
     
     /// <summary>
-    /// Handle when multiple loaders match a route
+    /// Invoked when no loader matches a path
     /// </summary>
-    void MultipleMatches(string route, IReadOnlyList<ReactiveViewModelLoader> loaders);
+    void NotFound(string path);
+    
+    /// <summary>
+    /// Invoked when multiple loaders match a path
+    /// </summary>
+    void MultipleMatches(string path, IReadOnlyList<ReactiveViewModelLoader> loaders);
 
     /// <summary>
-    /// Handle when a loader throws an exception 
+    /// Invoked when a loader throws an exception 
     /// </summary>
-    void Error(string route, ReactiveViewModelLoader loader, Exception ex);
+    void Error(string route, ReactiveViewModelLoader loader, Exception ex, TimeSpan elapsed);
 }

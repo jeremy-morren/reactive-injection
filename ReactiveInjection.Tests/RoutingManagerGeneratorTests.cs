@@ -27,8 +27,7 @@ public class RoutingManagerGeneratorTests
 
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
         
-        driver = driver.RunGeneratorsAndUpdateCompilation(compilation,
-            out var outputCompilation, out var diagnostics);
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out _, out var diagnostics);
         
         await Verify(driver);
         

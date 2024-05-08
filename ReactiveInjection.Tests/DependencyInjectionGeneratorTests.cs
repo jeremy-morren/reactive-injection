@@ -9,10 +9,10 @@ namespace ReactiveInjection.Tests;
 public class DependencyInjectionGeneratorTests
 {
     [Fact]
-    public Task Generate()
+    public async Task Generate()
     {
         new Tree.Models.ViewModelFactory().ShouldNotBeNull();
-        var syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(Source));
+        var syntaxTree = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(Source));
         
         var compilation = CSharpCompilation.Create(
             assemblyName: "ReactiveInjection.GeneratorTests",
@@ -27,9 +27,11 @@ public class DependencyInjectionGeneratorTests
 
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
-        driver = driver.RunGenerators(compilation);
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var _, out var diagnostics);
 
-        return Verifier.Verify(driver);
+        await Verifier.Verify(driver);
+
+        diagnostics.ShouldBeEmpty();
     }
     
     private static readonly string Source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ViewModels.cs");

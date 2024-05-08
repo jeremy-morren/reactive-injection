@@ -41,5 +41,11 @@
       <None Update="GeneratorTests.Generate#Tree.Models.ViewModelFactory.g.verified.cs">
         <ParentFile>GeneratorTests</ParentFile>
       </None>
+      <None Update="RoutingManagerGeneratorTests.Generate#ReactiveInjection.GeneratorTests.ReactiveRoutingService.g.verified.cs">
+        <DependentUpon>RoutingManagerGeneratorTests.cs</DependentUpon>
+      </None>
+      <None Update="DependencyInjectionGeneratorTests.Generate#Tree.Models.ViewModelFactory.g.verified.cs">
+        <DependentUpon>DependencyInjectionGeneratorTests.cs</DependentUpon>
+      </None>
     </ItemGroup>
 </Project>

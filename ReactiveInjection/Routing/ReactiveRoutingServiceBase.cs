@@ -1,4 +1,6 @@
-﻿namespace ReactiveInjection.Routing;
+﻿using System.Diagnostics;
+
+namespace ReactiveInjection.Routing;
 
 public abstract class ReactiveRoutingServiceBase<TService> where TService : ReactiveRoutingServiceBase<TService>
 {
@@ -22,6 +24,8 @@ public abstract class ReactiveRoutingServiceBase<TService> where TService : Reac
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
 
+        var start = Stopwatch.GetTimestamp();
+
         var split = path.Split('/');
         
         var matches = _loaders.Where(l => l.MatchesRoute(split)).ToList();
@@ -35,11 +39,15 @@ public abstract class ReactiveRoutingServiceBase<TService> where TService : Reac
                     var loader = matches[0];
                     _handler.Matched(path, loader);
                     var ct = new CancellationTokenSource(_handler.LoadTimeout).Token;
-                    return await loader.Load((TService)this, split, ct);
+                    var result = await loader.Load((TService)this, split, ct);
+                    var elapsed = GetElapsed(start);
+                    _handler.Loaded(path, loader, elapsed);
+                    return result;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    _handler.Error(path, matches[0], e);
+                    var elapsed = GetElapsed(start);
+                    _handler.Error(path, matches[0], ex, elapsed);
                     return null;
                 }
 
@@ -52,5 +60,12 @@ public abstract class ReactiveRoutingServiceBase<TService> where TService : Reac
                 _handler.MultipleMatches(path, matches);
                 return null;
         }
+    }
+
+    private static TimeSpan GetElapsed(long start)
+    {
+        var stop = Stopwatch.GetTimestamp();
+        var seconds = (stop - start) / (double)Stopwatch.Frequency;
+        return TimeSpan.FromSeconds(seconds);
     }
 }
