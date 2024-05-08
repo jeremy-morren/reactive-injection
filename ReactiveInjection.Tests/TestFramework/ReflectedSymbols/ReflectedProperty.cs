@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using ReactiveInjection.SourceGenerators.Symbols;
 
-namespace ReactiveInjection.Tests.Reflection;
+namespace ReactiveInjection.Tests.TestFramework.ReflectedSymbols;
 
 internal class ReflectedProperty(PropertyInfo source) : ReflectedTokenBase, IProperty
 {

@@ -2,7 +2,7 @@
 using Shouldly;
 using Tree.Models;
 
-namespace ReactiveInjection.Tests.Reflection;
+namespace ReactiveInjection.Tests.TestFramework.ReflectedSymbols;
 
 public class ReflectionTests
 {

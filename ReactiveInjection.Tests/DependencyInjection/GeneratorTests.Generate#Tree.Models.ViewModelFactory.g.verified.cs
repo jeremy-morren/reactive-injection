@@ -6,7 +6,6 @@
 #nullable enable
 
 using Microsoft.Extensions.Logging;
-using System.Reactive;
 
 #nullable disable warnings
 namespace Tree.Models
@@ -35,7 +34,7 @@ namespace Tree.Models
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
         public ViewModelFactory(global::Tree.Models.Service service0, global::System.Collections.Generic.List<int> service1, global::System.Collections.Generic.List<int[]> service2, global::Tree.Models.ViewModel3 service3, global::System.IServiceProvider service4, ILoggerFactory? loggerFactory = null)
         {
-            this._logger = (loggerFactory ?? NullLoggerFactory.Instance).CreateLogger(this.GetType());
+            this._logger = (loggerFactory ?? global::Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory.Instance).CreateLogger(this.GetType());
 
             this._service0 = service0;
             this._service1 = service1;
@@ -65,9 +64,9 @@ namespace Tree.Models
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
-        public global::System.IObservable<global::Tree.Models.ViewModel1> LoadViewModel1(string id, global::System.Threading.CancellationToken ct)
+        public global::System.IObservable<global::Tree.Models.ViewModel1> LoadViewModel1(string id)
         {
-            return global::System.Reactive.Observable.FromAsync<global::Tree.Models.ViewModel1>(async (global::System.Threading.CancellationToken ct) =>
+            return global::System.Reactive.Linq.Observable.FromAsync<global::Tree.Models.ViewModel1>(async (global::System.Threading.CancellationToken ct) =>
             {
                 try
                 {
@@ -78,7 +77,7 @@ namespace Tree.Models
                     _logger.LogError(ex, "Error calling loader {LoaderMethod} for {ViewModel}", args: new object[]{"Load", typeof(global::Tree.Models.ViewModel1)});
                     throw;
                 }
-            }, scheduler: global::ReactiveUI.RxApp.MainThreadScheduler).Switch();
+            }, scheduler: global::ReactiveUI.RxApp.MainThreadScheduler);
         }
 
         [global::System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -102,6 +101,26 @@ namespace Tree.Models
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
+        public global::System.IObservable<global::Tree.Models.ViewModel2> LoadViewModel2()
+        {
+            return global::System.Reactive.Linq.Observable.FromAsync<global::Tree.Models.ViewModel2>(async (global::System.Threading.CancellationToken ct) =>
+            {
+                try
+                {
+                    return await global::Tree.Models.ViewModel2.Load(this._service3, this._state1, ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error calling loader {LoaderMethod} for {ViewModel}", args: new object[]{"Load", typeof(global::Tree.Models.ViewModel2)});
+                    throw;
+                }
+            }, scheduler: global::ReactiveUI.RxApp.MainThreadScheduler);
+        }
+
+        [global::System.Diagnostics.DebuggerStepThroughAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
         public global::Tree.Models.ViewModel3 ViewModel3(string str, string str2)
         {
             try
@@ -113,6 +132,26 @@ namespace Tree.Models
                 _logger.LogError(ex, "Error constructing {ViewModel}", args: new object[]{typeof(global::Tree.Models.ViewModel3)});
                 throw;
             }
+        }
+
+        [global::System.Diagnostics.DebuggerStepThroughAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
+        public global::System.IObservable<global::Tree.Models.ViewModel3> LoadViewModel3(string id, string name)
+        {
+            return global::System.Reactive.Linq.Observable.FromAsync<global::Tree.Models.ViewModel3>(async (global::System.Threading.CancellationToken ct) =>
+            {
+                try
+                {
+                    return await global::Tree.Models.ViewModel3.Load(id, name, this._service3, this._state1, ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error calling loader {LoaderMethod} for {ViewModel}", args: new object[]{"Load", typeof(global::Tree.Models.ViewModel3)});
+                    throw;
+                }
+            }, scheduler: global::ReactiveUI.RxApp.MainThreadScheduler);
         }
 
         [global::System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -136,6 +175,26 @@ namespace Tree.Models
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
+        public global::System.IObservable<global::Tree.Models.ViewModel4> LoadViewModel4(int id)
+        {
+            return global::System.Reactive.Linq.Observable.FromAsync<global::Tree.Models.ViewModel4>(async (global::System.Threading.CancellationToken ct) =>
+            {
+                try
+                {
+                    return await global::Tree.Models.ViewModel4.Load(id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error calling loader {LoaderMethod} for {ViewModel}", args: new object[]{"Load", typeof(global::Tree.Models.ViewModel4)});
+                    throw;
+                }
+            }, scheduler: global::ReactiveUI.RxApp.MainThreadScheduler);
+        }
+
+        [global::System.Diagnostics.DebuggerStepThroughAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
         public global::Tree.Models.ViewModel5 ViewModel5(global::System.Collections.ObjectModel.ReadOnlyObservableCollection<global::Tree.Models.SharedState> parameter)
         {
             try
@@ -147,6 +206,26 @@ namespace Tree.Models
                 _logger.LogError(ex, "Error constructing {ViewModel}", args: new object[]{typeof(global::Tree.Models.ViewModel5)});
                 throw;
             }
+        }
+
+        [global::System.Diagnostics.DebuggerStepThroughAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ReactiveInjection.SourceGenerator", "1.0.0.0")]
+        public global::System.IObservable<global::Tree.Models.ViewModel5> LoadViewModel5(string token)
+        {
+            return global::System.Reactive.Linq.Observable.FromAsync<global::Tree.Models.ViewModel5>(async (global::System.Threading.CancellationToken ct) =>
+            {
+                try
+                {
+                    return await global::Tree.Models.ViewModel5.Load(token, this._service3, this._state1, ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error calling loader {LoaderMethod} for {ViewModel}", args: new object[]{"Load", typeof(global::Tree.Models.ViewModel5)});
+                    throw;
+                }
+            }, scheduler: global::ReactiveUI.RxApp.MainThreadScheduler);
         }
 
         [global::System.Diagnostics.DebuggerStepThroughAttribute()]

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using ReactiveInjection.SourceGenerators.DependencyInjection;
 using ReactiveInjection.SourceGenerators.Symbols;
-using ReactiveInjection.Tests.Reflection;
+using ReactiveInjection.Tests.TestFramework.ReflectedSymbols;
 using Shouldly;
 using Tree.Models;
 using Xunit.Abstractions;

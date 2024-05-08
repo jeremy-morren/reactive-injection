@@ -104,12 +104,12 @@ internal class ErrorLogWriter
             parameter.Type, viewModel);
     }
 
-    public void IncorrectLoaderSignature(IType viewModel, IMethod method)
+    public void IncorrectLoaderSignature(IMethod method)
     {
         _log.WriteError(method.Location,
             "RI1040",
             "Incorrect loader method signature",
-            "Loader '{0}' on ViewModel '{1}' must return Task<T> where T is the ViewModel type",
-            method, viewModel);
+            "Loader '{0}' must return Task<T> where T is the ViewModel type",
+            method);
     }
 }

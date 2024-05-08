@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using ReactiveInjection.SourceGenerators.Symbols;
 
-namespace ReactiveInjection.Tests.Reflection;
+namespace ReactiveInjection.Tests.TestFramework.ReflectedSymbols;
 
 internal class ReflectedType(
     Type type,

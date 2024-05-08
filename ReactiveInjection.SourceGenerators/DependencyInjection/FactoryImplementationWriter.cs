@@ -195,13 +195,13 @@ internal class FactoryImplementationWriter
                 //If is wrapping factory type, then use 'this'
                 if (param.Type.Equals(_tree.FactoryType))
                     return "this";
-
+                
                 if (param.Type.IsCancellationToken())
                     return "ct";
                 
                 if (AttributeHelpers.HasFromServicesAttribute(param))
                     return _services[param.Type];
-
+                
                 if (AttributeHelpers.HasSharedStateAttribute(param))
                     return _sharedState[param.Type];
                 

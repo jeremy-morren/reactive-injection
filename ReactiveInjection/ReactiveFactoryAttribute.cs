@@ -6,8 +6,7 @@ namespace ReactiveInjection;
 /// Specifies that a factory should be constructed for <see cref="ViewModelFactory"/>
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-[PublicAPI]
-[MeansImplicitUse(ImplicitUseTargetFlags.WithMembers)]
+[PublicAPI, MeansImplicitUse(ImplicitUseTargetFlags.WithMembers)]
 public sealed class ReactiveFactoryAttribute : Attribute
 {
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reflection;
 
-namespace ReactiveInjection.Tests.Reflection;
+namespace ReactiveInjection.Tests.TestFramework.ReflectedSymbols;
 
 public static class NullabilityHelpers
 {

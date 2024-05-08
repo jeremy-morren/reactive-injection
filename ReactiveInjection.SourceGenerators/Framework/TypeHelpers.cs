@@ -5,9 +5,16 @@ namespace ReactiveInjection.SourceGenerators.Framework;
 
 internal static class TypeHelpers
 {
-    public static bool IsTask(this IType type)
+    public static bool IsTask(this IType type, out IType argument)
     {
-        return type is { Name: "Task", Namespace: "System.Threading.Tasks" } && type.GenericArguments.Count() == 1;
+        if (type is { Name: "Task", Namespace: "System.Threading.Tasks" } && type.GenericArguments.Count() == 1)
+        {
+            argument = type.GenericArguments.First();
+            return true;
+        }
+
+        argument = null!;
+        return false;
     }
     
     public static bool IsCancellationToken(this IType type)

@@ -86,9 +86,11 @@ internal class FactoryDependencyTreeBuilder
             {
                 if (!method.IsPublic || !method.IsStatic || !method.Name.StartsWith("Load"))
                     continue;
-                if (method.ReturnType == null || !method.ReturnType.IsTask())
+                if (method.ReturnType == null 
+                    || !method.ReturnType.IsTask(out var arg) 
+                    || !arg.Equals(vmType))
                 {
-                    _log.IncorrectLoaderSignature(factory, method);
+                    _log.IncorrectLoaderSignature(method);
                     continue;
                 }
                 if (ProcessMethod(factory, 

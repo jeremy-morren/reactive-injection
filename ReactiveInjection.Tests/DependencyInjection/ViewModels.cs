@@ -25,6 +25,7 @@ namespace Tree.Models
         {
         }
         
+        [NavigationRoute("VM1/{id}")]
         public static Task<ViewModel1> Load(string id, [FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
         {
             throw new NotImplementedException();
@@ -39,6 +40,12 @@ namespace Tree.Models
             [FromServices] IServiceProvider services)
         {
         }
+        
+        [NavigationRoute("VM2")]
+        public static Task<ViewModel2> Load([FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     public class ViewModel3
@@ -48,16 +55,37 @@ namespace Tree.Models
             string str2)
         {
         }
+        
+        [NavigationRoute("VM3/{id}/{name}")]
+        public static Task<ViewModel3> Load(string id, 
+            string name, 
+            [FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     public class ViewModel4
     {
         public ViewModel4([SharedState] SharedState state) {}   
+        
+        [NavigationRoute("VM4/{id}/{name}")]
+        public static Task<ViewModel4> Load(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     public class ViewModel5
     {
         public ViewModel5(ReadOnlyObservableCollection<SharedState> parameter) {}   
+        
+        [NavigationRoute("{Token}")]
+        public static Task<ViewModel5> Load(string token, 
+            [FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     public class ViewModel6

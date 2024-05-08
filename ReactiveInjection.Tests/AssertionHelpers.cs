@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Collections;
 using ReactiveInjection.SourceGenerators.Symbols;
-using ReactiveInjection.Tests.Reflection;
+using ReactiveInjection.Tests.TestFramework.ReflectedSymbols;
 
 namespace ReactiveInjection.Tests;
 
