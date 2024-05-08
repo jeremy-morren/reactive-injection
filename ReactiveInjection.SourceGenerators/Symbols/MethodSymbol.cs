@@ -15,6 +15,7 @@ internal class MethodSymbol : IMethod
     }
 
     public Location Location => _source.Locations.GetLocation();
+    public IType ContainingType => new TypeSymbol(_source.ContainingType);
     public string Name => _source.Name;
     public bool IsStatic => _source.IsStatic;
     public bool IsPublic => _source.DeclaredAccessibility.IsPublic();

@@ -4,7 +4,7 @@
 
 namespace ReactiveInjection.SourceGenerators.Symbols;
 
-internal interface IType : IToken, IEquatable<IType> 
+internal interface IType : IToken, IEquatable<IType>
 {
     public IAssembly Assembly { get; }
 

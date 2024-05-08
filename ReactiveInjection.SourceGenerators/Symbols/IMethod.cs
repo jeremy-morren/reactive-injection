@@ -5,6 +5,8 @@ namespace ReactiveInjection.SourceGenerators.Symbols;
 
 internal interface IMethod : IToken
 {
+    public IType ContainingType { get; }
+    
     public string Name { get; }
     
     public bool IsStatic { get; }

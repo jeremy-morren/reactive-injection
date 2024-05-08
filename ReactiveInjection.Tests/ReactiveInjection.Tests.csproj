@@ -34,12 +34,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="DependencyInjection\ViewModels.cs">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="TestFramework\" />
+      <None Include="ViewModels.cs" CopyToOutputDirectory="Always" />
+      <None Update="GeneratorTests.Generate#Tree.Models.ViewModelFactory.g.received.cs">
+        <ParentFile>GeneratorTests</ParentFile>
+      </None>
+      <None Update="GeneratorTests.Generate#Tree.Models.ViewModelFactory.g.verified.cs">
+        <ParentFile>GeneratorTests</ParentFile>
+      </None>
     </ItemGroup>
 </Project>

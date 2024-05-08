@@ -17,6 +17,9 @@ internal static class AttributeHelpers
     
     public static bool IsReactiveFactoryAttribute(IAttribute attribute) => 
         IsType(attribute, "ReactiveFactoryAttribute");
+    
+    public static bool IsNavigationRouteAttribute(IAttribute attribute) => 
+        IsType(attribute, "NavigationRouteAttribute");
 
     public static bool HasFromServicesAttribute(IParameter parameter) =>
         parameter.Attributes.Any(IsFromServicesAttribute);

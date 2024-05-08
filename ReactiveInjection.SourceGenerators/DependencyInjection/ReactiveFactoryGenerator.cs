@@ -41,7 +41,7 @@ internal class ReactiveFactoryGenerator : IIncrementalGenerator
                 }
                 catch (Exception e)
                 {
-                    new ErrorLogWriter(log).FatalError(factory, e);
+                    new ErrorLogWriter(log).FatalFactoryGenerationError(factory, e);
                 }
             }
         });

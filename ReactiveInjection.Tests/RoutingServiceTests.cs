@@ -2,9 +2,11 @@
 using ReactiveInjection.Routing;
 using Shouldly;
 
+using Loader = ReactiveInjection.Routing.ReactiveViewModelLoader<ReactiveInjection.Tests.RoutingServiceTests.ReactiveRoutingService>;
+
 namespace ReactiveInjection.Tests;
 
-public class RoutingTests
+public class RoutingServiceTests
 {
     [Fact]
     public async Task SingleRouteShouldMatch()
@@ -17,7 +19,7 @@ public class RoutingTests
             .Returns(TimeSpan.FromSeconds(30))
             .Verifiable();
         
-        var manager = new ReactiveRoutingManger(handler, loader);
+        var manager = new ReactiveRoutingService(handler, loader);
 
         var result = await manager.Load(nameof(SingleRouteShouldMatch));
         result.ShouldBe(vm);
@@ -32,7 +34,7 @@ public class RoutingTests
     {
         var handler = new Mock<IReactiveRouterHandler>();
 
-        var manager = new ReactiveRoutingManger(handler, NeverMatchLoader, NeverMatchLoader);
+        var manager = new ReactiveRoutingService(handler, NeverMatchLoader, NeverMatchLoader);
 
         var result = await manager.Load(nameof(NoMatchRouteShouldCallHandler));
         result.ShouldBeNull();
@@ -54,7 +56,7 @@ public class RoutingTests
             .Returns(TimeSpan.FromSeconds(30))
             .Verifiable();
         
-        var manager = new ReactiveRoutingManger(handler, loader);
+        var manager = new ReactiveRoutingService(handler, loader);
 
         var result = await manager.Load(route);
         result.ShouldBe(vm);
@@ -71,7 +73,7 @@ public class RoutingTests
         
         var handler = new Mock<IReactiveRouterHandler>();
         
-        var manager = new ReactiveRoutingManger(handler, loader, loader);
+        var manager = new ReactiveRoutingService(handler, loader, loader);
 
         var result = await manager.Load(nameof(MultipleMatchesShouldFail));
         result.ShouldBeNull();
@@ -83,25 +85,25 @@ public class RoutingTests
         handler.VerifyNoOtherCalls();
     }
     
-    private class ReactiveRoutingManger : ReactiveRoutingManagerBase
+    public class ReactiveRoutingService : ReactiveRoutingServiceBase<ReactiveRoutingService>
     {
-        public ReactiveRoutingManger(Mock<IReactiveRouterHandler> handler, params ReactiveViewModelLoader[] loaders)
+        public ReactiveRoutingService(Mock<IReactiveRouterHandler> handler, params Loader[] loaders)
             : base(handler.Object, loaders.Concat([NeverMatchLoader]).ToArray())
         {
             
         }
     }
 
-    private static readonly ReactiveViewModelLoader NeverMatchLoader = 
+    private static readonly Loader NeverMatchLoader = 
         Loader(_ => false, (_, _) => throw new NotImplementedException());
-
     
-    private static ReactiveViewModelLoader Loader(string route,
+    private static Loader Loader(string route,
         Func<string[], CancellationToken, Task<object>> load) =>
         Loader(a => string.Join("/", a) == route, load);
-    
-    private static ReactiveViewModelLoader Loader(Func<string[], bool> matches,
-        Func<string[], CancellationToken, Task<object>> load) =>
-        new(typeof(object), string.Empty, string.Empty, matches, load);
 
+    private static Loader Loader(Func<string[], bool> matches,
+        Func<string[], CancellationToken, Task<object>> load) =>
+        new(typeof(object), string.Empty, string.Empty,
+            matches, 
+            (_, b, c) => load(b, c));
 }

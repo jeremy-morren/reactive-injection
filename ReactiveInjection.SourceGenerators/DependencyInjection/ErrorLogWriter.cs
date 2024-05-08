@@ -1,4 +1,6 @@
-﻿using ReactiveInjection.SourceGenerators.Framework;
+﻿using Microsoft.CodeAnalysis;
+using ReactiveInjection.SourceGenerators.Framework;
+using ReactiveInjection.SourceGenerators.Routing;
 using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.SourceGenerators.DependencyInjection;
@@ -9,16 +11,25 @@ internal class ErrorLogWriter
 
     public ErrorLogWriter(IErrorLog log) => _log = log;
 
-    public void FatalError(IType factory, Exception e)
+    public void FatalFactoryGenerationError(IType factory, Exception e)
     {
         _log.WriteError(factory.Location,
             "RI1000",
             "Unexpected error generating ViewModel factory implementation",
             "An unexpected error occurred generating the view model factory '{0}': {1}: {2}",
-            factory,
-            e.GetType(),
-            e.Message);
+            factory, e.GetType(), e.Message);
     }
+    
+    public void FatalRoutingGenerationError(Exception e)
+    {
+        _log.WriteError(Location.None,
+            "RI1001",
+            "Unexpected error generating reactive routing manager",
+            "An unexpected error occurred generating the reactive routing manager {1}: {2}",
+            e.GetType(), e.Message);
+    }
+    
+    #region Factory
     
     public void FactoryIsNotPartial(IType factory)
     {
@@ -103,7 +114,11 @@ internal class ErrorLogWriter
             "Shared state '{0}' on ViewModel '{1}' has no parameterless constructor",
             parameter.Type, viewModel);
     }
-
+    
+    #endregion
+    
+    #region Loader
+    
     public void IncorrectLoaderSignature(IMethod method)
     {
         _log.WriteError(method.Location,
@@ -112,4 +127,46 @@ internal class ErrorLogWriter
             "Loader '{0}' must return Task<T> where T is the ViewModel type",
             method);
     }
+    
+    #endregion
+    
+    #region Routing
+
+    public void IncorrectRouteHandlerSignature(IMethod method)
+    {
+        _log.WriteError(method.Location,
+            "RI1050",
+            "Incorrect route handler method signature",
+            "Route handler '{0}' must return Task<T> where T is the ViewModel type",
+            method);
+    }
+    
+    public void DuplicateRouteParameters(IAttribute attribute, string parameter)
+    {
+        _log.WriteError(attribute.Location,
+            "RI1051",
+            "Duplicate route parameter",
+            "Parameter '{0}' is defined multiple times in route attribute",
+            parameter);
+    }
+    
+    public void InvalidRouteHandlerParameterType(IParameter parameter, RouteParameterType expected)
+    {
+        _log.WriteError(parameter.Location,
+            "RI1052",
+            "Invalid route handler parameter type",
+            "Parameter '{0}' type should be {1} but is '{2}'",
+            parameter, expected.ToString().ToLowerInvariant(), parameter.Type);
+    }
+    
+    public void RouteHandlerParameterNotProvided(IParameter parameter)
+    {
+        _log.WriteError(parameter.Location,
+            "RI1053",
+            "Unknown route handler parameter",
+            "Parameter '{0}' is not provided by the route",
+            parameter);
+    }
+    
+    #endregion
 }

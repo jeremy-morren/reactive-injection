@@ -26,7 +26,7 @@ namespace Tree.Models
         }
         
         [NavigationRoute("VM1/{id}")]
-        public static Task<ViewModel1> Load(string id, [FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        public static Task<ViewModel1> Load(string id, [FromServices] ViewModel3 service, CancellationToken ct)
         {
             throw new NotImplementedException();
         }
@@ -42,7 +42,7 @@ namespace Tree.Models
         }
         
         [NavigationRoute("VM2")]
-        public static Task<ViewModel2> Load([FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        public static Task<ViewModel2> Load([FromServices] ViewModel3 service, CancellationToken ct)
         {
             throw new NotImplementedException();
         }
@@ -56,10 +56,14 @@ namespace Tree.Models
         {
         }
         
-        [NavigationRoute("VM3/{id}/{name}")]
-        public static Task<ViewModel3> Load(string id, 
-            string name, 
-            [FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        [NavigationRoute("VM3/{id:decimal}/{name}")]
+        public static Task<ViewModel3> Load(decimal id, string name, [FromServices] IServiceProvider service, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [NavigationRoute("VM3/{b:bool}/{name}")]
+        public static Task<ViewModel3> Load2(bool b, [FromServices] IServiceProvider service, CancellationToken ct)
         {
             throw new NotImplementedException();
         }
@@ -69,7 +73,7 @@ namespace Tree.Models
     {
         public ViewModel4([SharedState] SharedState state) {}   
         
-        [NavigationRoute("VM4/{id}/{name}")]
+        [NavigationRoute("VM4/{id:int}/{name}")]
         public static Task<ViewModel4> Load(int id)
         {
             throw new NotImplementedException();
@@ -81,8 +85,7 @@ namespace Tree.Models
         public ViewModel5(ReadOnlyObservableCollection<SharedState> parameter) {}   
         
         [NavigationRoute("{Token}")]
-        public static Task<ViewModel5> Load(string token, 
-            [FromServices] ViewModel3 service, [SharedState] List<double> state, CancellationToken ct)
+        public static Task<ViewModel5> Load(string token, [FromServices] ViewModel3 service, CancellationToken ct)
         {
             throw new NotImplementedException();
         }

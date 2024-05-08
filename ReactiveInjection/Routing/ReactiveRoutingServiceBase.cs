@@ -1,12 +1,12 @@
 ﻿namespace ReactiveInjection.Routing;
 
-public abstract class ReactiveRoutingManagerBase
+public abstract class ReactiveRoutingServiceBase<TService> where TService : ReactiveRoutingServiceBase<TService>
 {
     private readonly IReactiveRouterHandler _handler;
-    private readonly ReactiveViewModelLoader[] _loaders;
+    private readonly ReactiveViewModelLoader<TService>[] _loaders;
 
-    protected ReactiveRoutingManagerBase(IReactiveRouterHandler handler, 
-        ReactiveViewModelLoader[] loaders)
+    protected ReactiveRoutingServiceBase(IReactiveRouterHandler handler, 
+        ReactiveViewModelLoader<TService>[] loaders)
     {
         _handler = handler;
         _loaders = loaders;
@@ -35,7 +35,7 @@ public abstract class ReactiveRoutingManagerBase
                     var loader = matches[0];
                     _handler.Matched(route, loader);
                     var ct = new CancellationTokenSource(_handler.LoadTimeout).Token;
-                    return await loader.Load(split, ct);
+                    return await loader.Load((TService)this, split, ct);
                 }
                 catch (Exception e)
                 {

@@ -50,7 +50,7 @@ internal class FactoryImplementationWriter
 
         _writer.WritePartialTypeDefinition(_tree.FactoryType);
 
-        _writer.WriteLine($"private readonly ILogger _logger;");
+        _writer.WriteLine("private readonly ILogger _logger;");
         _writer.WriteLine();
         
         //Create readonly fields for services
@@ -75,7 +75,7 @@ internal class FactoryImplementationWriter
         _writer.WriteAttributes();
         _writer.Write($"public {_tree.FactoryType.Name}(");
         
-        WriteParameters(_tree.Services, (t, i) => $"{t.CSharpName} service{i}");
+        _writer.WriteParameters(_tree.Services, (t, i) => $"{t.CSharpName} service{i}");
 
         if (_tree.Services.Count > 0)
             _writer.WriteRaw(", ");
@@ -124,7 +124,7 @@ internal class FactoryImplementationWriter
         _writer.WriteRawLine(')');
         _writer.WriteLineThenPush('{');
         
-        WriteTryCatch(() =>
+        _writer.WriteTryCatch(() =>
         {
             _writer.Write($"return new {vm.Type.CSharpName}(");
 
@@ -158,7 +158,7 @@ internal class FactoryImplementationWriter
         _writer.WriteLine($"return {fromAsync}<{vm.Type.CSharpName}>(async (global::System.Threading.CancellationToken ct) =>");
         _writer.WriteLineThenPush('{');
         
-        WriteTryCatch(() =>
+        _writer.WriteTryCatch(() =>
         {
             _writer.Write($"return await {vm.Type.CSharpName}.{vm.Method.Name}(");
             WriteMethodParameters(vm.Method.Parameters);
@@ -179,7 +179,7 @@ internal class FactoryImplementationWriter
 
     private void WriteMethodParametersDefinition(ViewModel vm)
     {
-        WriteParameters(vm.MethodParams, 
+        _writer.WriteParameters(vm.MethodParams, 
             p =>
             {
                 var nullable = p.Type.IsNullable ? "?" : null;
@@ -189,7 +189,7 @@ internal class FactoryImplementationWriter
 
     private void WriteMethodParameters(IEnumerable<IParameter> parameters)
     {
-        WriteParameters(parameters, 
+        _writer.WriteParameters(parameters, 
             param =>
             {
                 //If is wrapping factory type, then use 'this'
@@ -210,32 +210,10 @@ internal class FactoryImplementationWriter
             });
     }
 
-    private void WriteParameters<T>(IEnumerable<T> parameters, Func<T, string> toString)
-    {
-        _writer.WriteRaw(string.Join(", ", parameters.Select(toString)));
-    }
-    
-    private void WriteParameters<T>(IEnumerable<T> parameters, Func<T, int, string> toString)
-    {
-        _writer.WriteRaw(string.Join(", ", parameters.Select(toString)));
-    }
-
     private void LogError([StructuredMessageTemplate] string message, params string[] args)
     {
         var argList = string.Join(", ", args);
         
         _writer.WriteLine($"_logger.LogError(ex, \"{message}\", args: new object[]{{{argList}}});");
-    }
-
-    private void WriteTryCatch(Action @try, Action @catch)
-    {
-        _writer.WriteLine("try");
-        _writer.WriteLineThenPush('{');
-        @try();
-        _writer.PopThenWriteLine('}');
-        _writer.WriteLine("catch (Exception ex)");
-        _writer.WriteLineThenPush('{');
-        @catch();
-        _writer.PopThenWriteLine('}');
     }
 }

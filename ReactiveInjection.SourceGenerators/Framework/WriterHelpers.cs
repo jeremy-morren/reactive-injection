@@ -90,4 +90,26 @@ internal static class WriterHelpers
         while (writer.CurrentIndentLevel > 0)
             writer.PopThenWriteLine('}');
     }
+    
+    public static void WriteParameters<T>(this IndentedWriter writer, IEnumerable<T> parameters, Func<T, string> toString)
+    {
+        writer.WriteRaw(string.Join(", ", parameters.Select(toString)));
+    }
+    
+    public static void WriteParameters<T>(this IndentedWriter writer, IEnumerable<T> parameters, Func<T, int, string> toString)
+    {
+        writer.WriteRaw(string.Join(", ", parameters.Select(toString)));
+    }
+
+    public static void WriteTryCatch(this IndentedWriter writer, Action @try, Action @catch)
+    {
+        writer.WriteLine("try");
+        writer.WriteLineThenPush('{');
+        @try();
+        writer.PopThenWriteLine('}');
+        writer.WriteLine("catch (Exception ex)");
+        writer.WriteLineThenPush('{');
+        @catch();
+        writer.PopThenWriteLine('}');
+    }
 }
