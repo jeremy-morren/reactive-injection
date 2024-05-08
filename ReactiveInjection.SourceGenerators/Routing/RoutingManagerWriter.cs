@@ -26,7 +26,7 @@ internal class RoutingManagerWriter
         return writer.ToString();
     }
 
-    public const string ClassName = "ReactiveRoutingManager";
+    public const string ClassName = "ReactiveRoutingService";
 
     private void GenInternal()
     {
@@ -69,7 +69,6 @@ internal class RoutingManagerWriter
         _writer.Pop();
         
         _writer.WriteLineThenPush('{');
-        _writer.WriteLine("this._handler = handler;");
         for (var i = 0; i < _tree.Services.Count; i++)
             _writer.WriteLine($"this._service{i} = service{i};");
         _writer.PopThenWriteLine('}');
@@ -98,11 +97,11 @@ internal class RoutingManagerWriter
     private static string GenMatchMethod(ViewModelLoaderRoute route)
     {
         //Param name is a
-        //looks like r => r.Count == route.Segments.Count && int.TryParse(r[0], out _)
+        //looks like r => r.Length == route.Segments.Count && int.TryParse(r[0], out _)
 
         var clauses = new List<string>()
         {
-            $"r.Count == {route.Segments.Count}"
+            $"r.Length == {route.Segments.Count}"
         };
         for (var i = 0; i < route.Segments.Count; i++)
         {
@@ -110,7 +109,7 @@ internal class RoutingManagerWriter
             {
                 case string str:
                     //Validate that the string segment matches
-                    clauses.Add($"r[{i}] == @\"{str}\"");
+                    clauses.Add($"r[{i}].Equals(@\"{str}\", StringComparison.OrdinalIgnoreCase)");
                     break;
                 case RouteParameter p:
                     //Validate that the parameter can be parsed
@@ -127,7 +126,7 @@ internal class RoutingManagerWriter
 
     private string GenLoadMethod(ViewModelLoaderRoute route)
     {
-        //Looks like (s, r, ct) => ViewModel1.Load(r[0], int.Parse(r[1]), s._service0, ct)
+        //Looks like async (s, r, ct) => (object)(await ViewModel1.Load(r[0], int.Parse(r[1]), s._service0, ct))
         
         var parameters = new List<string>();
         foreach (var p in route.Method.Parameters)
@@ -152,7 +151,8 @@ internal class RoutingManagerWriter
                 _ => $"{rp.CSharpType}.Parse({value})"
             });
         }
-        
-        return $"(s, r, ct) => {route.ViewModel.CSharpName}.{route.Method.Name}({string.Join(", ", parameters)})";
+
+        var call = $"{route.ViewModel.CSharpName}.{route.Method.Name}({string.Join(", ", parameters)})";
+        return $"async (s, r, ct) => (object)(await {call})";
     }
 }

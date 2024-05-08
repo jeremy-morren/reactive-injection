@@ -15,14 +15,14 @@ public abstract class ReactiveRoutingServiceBase<TService> where TService : Reac
     /// <summary>
     /// Attempts to load a view model for the given route, returning null if loading fails
     /// </summary>
-    /// <param name="route">The route to load</param>
+    /// <param name="path">The route to load</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">Route is null</exception>
-    public async Task<object?> Load(string route)
+    public async Task<object?> Load(string path)
     {
-        if (route == null) throw new ArgumentNullException(nameof(route));
+        if (path == null) throw new ArgumentNullException(nameof(path));
 
-        var split = route.Split('/');
+        var split = path.Split('/');
         
         var matches = _loaders.Where(l => l.MatchesRoute(split)).ToList();
         
@@ -33,23 +33,23 @@ public abstract class ReactiveRoutingServiceBase<TService> where TService : Reac
                 try
                 {
                     var loader = matches[0];
-                    _handler.Matched(route, loader);
+                    _handler.Matched(path, loader);
                     var ct = new CancellationTokenSource(_handler.LoadTimeout).Token;
                     return await loader.Load((TService)this, split, ct);
                 }
                 catch (Exception e)
                 {
-                    _handler.Error(route, matches[0], e);
+                    _handler.Error(path, matches[0], e);
                     return null;
                 }
 
             case 0:
                 //Not found
-                _handler.NotFound(route);
+                _handler.NotFound(path);
                 return null;
             default:
                 //Multiple matches
-                _handler.MultipleMatches(route, matches);
+                _handler.MultipleMatches(path, matches);
                 return null;
         }
     }
