@@ -137,7 +137,7 @@ internal class ErrorLogWriter
         _log.WriteError(method.Location,
             "RI1050",
             "Incorrect route handler method signature",
-            "Route handler '{0}' must return Task<T> where T is the ViewModel type",
+            "Route handler '{0}' must return T or Task<T> where T is the ViewModel type",
             method);
     }
     

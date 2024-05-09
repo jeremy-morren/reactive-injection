@@ -42,7 +42,7 @@ namespace Tree.Models
         }
         
         [NavigationRoute("VM2")]
-        public static Task<ViewModel2> Load([FromServices] ViewModel3 service, CancellationToken ct)
+        public static ViewModel2 Load([FromServices] ViewModel3 service, CancellationToken ct)
         {
             throw new NotImplementedException();
         }

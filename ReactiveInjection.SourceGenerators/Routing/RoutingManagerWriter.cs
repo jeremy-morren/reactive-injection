@@ -126,6 +126,8 @@ internal class RoutingManagerWriter
 
     private string GenLoadMethod(ViewModelLoaderRoute route)
     {
+        const string taskFromResult = "global::System.Threading.Tasks.Task.FromResult";
+        
         //Looks like async (s, r, ct) => (object)(await ViewModel1.Load(r[0], int.Parse(r[1]), s._service0, ct))
         
         var parameters = new List<string>();
@@ -153,6 +155,9 @@ internal class RoutingManagerWriter
         }
 
         var call = $"{route.ViewModel.CSharpName}.{route.Method.Name}({string.Join(", ", parameters)})";
-        return $"async (s, r, ct) => (object)(await {call})";
+
+        return route.Method.ReturnType!.IsTask(out _) 
+            ? $"async (s, r, ct) => (object)(await {call})" 
+            : $"(s,r,ct) => {taskFromResult}<object>({call})";
     }
 }

@@ -38,7 +38,7 @@ namespace ReactiveInjection.GeneratorTests
                 @"Load",
                 @"VM2",
                 r => r.Length == 1 && r[0].Equals(@"VM2", StringComparison.OrdinalIgnoreCase),
-                async (s, r, ct) => (object)(await global::Tree.Models.ViewModel2.Load(s._service0, ct))),
+                (s,r,ct) => global::System.Threading.Tasks.Task.FromResult<object>(global::Tree.Models.ViewModel2.Load(s._service0, ct))),
             new global::ReactiveInjection.Routing.ReactiveViewModelLoader<ReactiveRoutingService>(
                 typeof(global::Tree.Models.ViewModel3),
                 @"Load",

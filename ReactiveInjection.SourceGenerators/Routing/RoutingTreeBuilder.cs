@@ -30,9 +30,7 @@ internal class RoutingTreeBuilder
 
             var vm = method.ContainingType;
             
-            if (method.ReturnType == null ||
-                !method.ReturnType.IsTask(out var returnType) ||
-                !returnType.Equals(vm))
+            if (!ValidReturnType(method, vm))
             {
                 _log.IncorrectRouteHandlerSignature(method);
                 continue;
@@ -67,6 +65,13 @@ internal class RoutingTreeBuilder
             Services = services.ToList()
         };
         return true;
+    }
+
+    private static bool ValidReturnType(IMethod method, IType viewModel)
+    {
+        if (method.ReturnType == null) return false;
+        if (method.ReturnType.Equals(viewModel)) return true;
+        return method.ReturnType.IsTask(out var arg) && arg.Equals(viewModel);
     }
 
     /// <summary>
@@ -151,8 +156,6 @@ internal class RoutingTreeBuilder
         return valid;
     }
     
-    
-
     private static RouteParameterType ParseType(string type) =>
         (RouteParameterType)Enum.Parse(typeof(RouteParameterType), type, true);
 
