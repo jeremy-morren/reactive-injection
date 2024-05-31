@@ -1,11 +1,9 @@
-
 $artifacts = Join-Path $PSScriptRoot "Artifacts"
 
 function Get-Version()
 {
-
     #Note: Packages sort lexically
-    $last = Get-ChildItem (Join-Path $artifacts "ReactiveInjection.Abstractions*.nupkg") `
+    $last = Get-ChildItem (Join-Path $artifacts "ReactiveInjection.SourceGenerators.*.nupkg") `
         | Sort-Object -Property Name -Descending `
         | Select-Object -First 1
 
@@ -15,19 +13,20 @@ function Get-Version()
     }
 
     $fileName = $last.Name
-    $v = [Version]::New($fileName.Substring("ReactiveInjection.Abstractions.".Length, "0.0.0".Length))
+    $v = [Version]::New($fileName.Substring("ReactiveInjection.SourceGenerators.".Length, "0.0.0".Length))
     [Version]::New($v.Major, $v.Minor, $v.Build + 1)
 }
 
 $version = (Get-Version).ToString()
 
-Write-Host "Building version ${version}" -ForegroundColor Cyan
+Write-Host "Packing ReactiveInjection ${version}" -ForegroundColor Cyan
 
-@("ReactiveInjection.Abstractions", "ReactiveInjection") | ForEach-Object {
+@("ReactiveInjection", "ReactiveInjection.SourceGenerators") | ForEach-Object {
     dotnet pack (Join-Path $PSScriptRoot "${_}/${_}.csproj") `
         -c Release "-p:Version=${version}" `
         -o $artifacts
 
-    # Copy-Item -Path (Join-Path $artifacts "${_}.${version}.nupkg") -Destination (Join-Path $artifacts "${_}.${version}.zip")
-    # Copy-Item -Path (Join-Path $artifacts "${_}.${version}.snupkg") -Destination (Join-Path $artifacts "${_}.${version}s.symbols.zip")
+    Copy-Item -Path (Join-Path $artifacts "${_}.${version}.nupkg") -Destination (Join-Path $artifacts "${_}.${version}.zip")
 }
+
+$version #Return version
