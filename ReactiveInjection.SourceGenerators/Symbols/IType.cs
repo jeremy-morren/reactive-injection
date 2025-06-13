@@ -2,59 +2,84 @@
 
 // ReSharper disable ReturnTypeCanBeEnumerable.Global
 
+using JetBrains.Annotations;
+
 namespace ReactiveInjection.SourceGenerators.Symbols;
 
-internal interface IType : IToken, IEquatable<IType> 
+[PublicAPI]
+internal interface IType : IToken, IEquatable<IType>
 {
-    public IAssembly Assembly { get; }
+    IAssembly Assembly { get; }
 
     /// <summary>
     /// Gets the containing type (for nested class)
     /// </summary>
-    public IType? ContainingType { get; }
+    IType? ContainingType { get; }
 
-    public string? Namespace { get; }
+    string? Namespace { get; }
 
-    public string Name { get; }
+    string Name { get; }
 
-    public string FullName { get; }
+    string FullName { get; }
 
     /// <summary>
     /// Gets a fully qualified CSharp type name (ie fully opened generic type),
     /// including 'global::' prefix and nullable qualifier
     /// </summary>
-    public string CSharpName { get; }
+    string CSharpName { get; }
 
-    public bool IsReferenceType { get; }
+    bool IsReferenceType { get; }
 
-    public bool IsAbstract { get; }
+    bool IsAbstract { get; }
 
-    public bool IsPartial { get; }
+    bool IsPartial { get; }
     
-    public bool IsGenericType { get; }
+    bool IsGenericType { get; }
 
-    public bool IsNullable { get; }
+    bool IsNullable { get; }
     
-    public IEnumerable<IType> GenericArguments { get; }
+    /// <summary>
+    /// Whether the type is a primitive (int, string, etc.)
+    /// </summary>
+    bool IsPrimitive { get; }
+    
+    /// <summary>
+    /// Gets the underlying type of a nullable type, if the type is Nullable{T}
+    /// </summary>
+    /// <returns></returns>
+    IType GetUnderlyingType();
+    
+    /// <summary>
+    /// Gets type generic arguments
+    /// </summary>
+    IEnumerable<IType> GenericArguments { get; }
 
     /// <summary>
     /// Gets all attributes applied to a type
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IAttribute> Attributes { get; }
+    IEnumerable<IAttribute> Attributes { get; }
 
     /// <summary>
-    /// Searches for all public constructors
+    /// Searches for all constructors
     /// </summary>
     /// <remarks>
-    /// This is the equivalent of  of <c>Type.Constructors(BindingFlags.Public | BindingFlags.Instance)</c>
+    /// This is the equivalent of  of <c>Type.Constructors(BindingFlags.| BindingFlags.Instance)</c>
     /// </remarks>
-    public IEnumerable<IConstructor> Constructors { get; }
-    
-    public IEnumerable<IProperty> Properties { get; }
+    IEnumerable<IConstructor> Constructors { get; }
     
     /// <summary>
-    /// Public methods
+    /// Gets all type properties
     /// </summary>
-    public IEnumerable<IMethod> Methods { get; }
+    IEnumerable<IProperty> Properties { get; }
+    
+    /// <summary>
+    /// methods
+    /// </summary>
+    IEnumerable<IMethod> Methods { get; }
+    
+    /// <summary>
+    /// Gets implemented interfaces
+    /// </summary>
+    IEnumerable<IType> Interfaces { get; }
 }

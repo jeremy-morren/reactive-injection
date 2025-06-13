@@ -44,6 +44,35 @@ internal class TypeSymbol : IType
     public bool IsGenericType => _source is INamedTypeSymbol { IsGenericType: true };
     
     public bool IsNullable => _source.NullableAnnotation == NullableAnnotation.Annotated;
+
+    public bool IsPrimitive => _source.SpecialType switch
+    {
+        SpecialType.System_String => true,
+
+        SpecialType.System_Boolean => true,
+        SpecialType.System_Byte => true,
+        SpecialType.System_Decimal => true,
+        SpecialType.System_Double => true,
+        SpecialType.System_Int16 => true,
+        SpecialType.System_Int32 => true,
+        SpecialType.System_Int64 => true,
+        SpecialType.System_SByte => true,
+        SpecialType.System_Single => true,
+        SpecialType.System_UInt16 => true,
+        SpecialType.System_UInt32 => true,
+        SpecialType.System_UInt64 => true,
+        _ => false
+    };
+
+    public IType GetUnderlyingType()
+    {
+        if (_source is INamedTypeSymbol { IsGenericType: true, ConstructedFrom.SpecialType: SpecialType.System_Nullable_T } namedTypeSymbol)
+        {
+            return new TypeSymbol(namedTypeSymbol.TypeArguments[0]);
+        }
+        throw new InvalidOperationException("Type is not a Nullable<T>.");
+    }
+    
     public IEnumerable<IType> GenericArguments => _source is INamedTypeSymbol { IsGenericType: true} s
         ? s.TypeArguments.Select(t => new TypeSymbol(t))
         : Enumerable.Empty<IType>();
@@ -64,6 +93,8 @@ internal class TypeSymbol : IType
             .OfType<IMethodSymbol>()
             .Where(m => m.MethodKind == MethodKind.Ordinary)
             .Select(s => new MethodSymbol(s));
+
+    public IEnumerable<IType> Interfaces => _source.AllInterfaces.Select(i => new TypeSymbol(i));
 
     public override string ToString() => _source.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
 

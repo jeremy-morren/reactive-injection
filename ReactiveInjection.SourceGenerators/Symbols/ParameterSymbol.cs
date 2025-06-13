@@ -10,6 +10,8 @@ internal class ParameterSymbol : IParameter
 
     public Location Location => _source.Locations.GetLocation();
 
+    public int Ordinal => _source.Ordinal;
+    
     public string Name => _source.Name;
 
     public IType Type => new TypeSymbol(_source.Type);

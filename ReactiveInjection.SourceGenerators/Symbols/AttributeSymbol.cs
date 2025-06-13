@@ -18,35 +18,36 @@ internal class AttributeSymbol : IAttribute
     public IType Type => new TypeSymbol(
         _source.AttributeClass ?? throw new Exception("Attribute class is null"));
 
-    public IType TypeParameter
-    {
-        get
-        {
-            
-            if (_source.ConstructorArguments.Length == 0) 
-                throw new Exception("Attribute has no constructor arguments");
+    public override string ToString() => _source.ToString();
 
-            var arg = _source.ConstructorArguments[0];
-            if (arg.Value is not ITypeSymbol source)
-                throw new ArgumentException("Invalid attribute parameter");
-            return new TypeSymbol(source);
-        }
-    }
+    public IType TypeParameter => GetConstructorArg(arg =>
+    {
+        if (arg.Value is not ITypeSymbol source)
+            throw new ArgumentException("Invalid attribute parameter");
+        return new TypeSymbol(source);
+    });
+
+    public string StringParameter => GetConstructorArg(arg =>
+        arg.Value as string ?? throw new ArgumentException("Invalid attribute parameter"));
     
-    public string[] StringParams
+    public string? StringParameterNullable
     {
         get
         {
-            
-            if (_source.ConstructorArguments.Length == 0) 
-                throw new Exception("Attribute has no constructor arguments");
-
-            var arg = _source.ConstructorArguments[0];
-            if (arg.Kind != TypedConstantKind.Array)
-                throw new ArgumentException("Invalid attribute parameter");
-            return arg.Values.Select(v => (string)v.Value!).ToArray();
+            var args = _source.ConstructorArguments;
+            if (args.Length == 0) return null;
+            var value = args[0].Value;
+            if (value == null) return null;
+            return value as string ?? throw new ArgumentException("Invalid attribute parameter");
         }
     }
 
-    public override string ToString() => _source.AttributeClass?.ToDisplayString() ?? _source.ToString();
+    private T GetConstructorArg<T>(Func<TypedConstant, T> selector)
+    {
+        if (_source.ConstructorArguments.Length == 0) 
+            throw new Exception("Attribute has no constructor arguments");
+
+        var arg = _source.ConstructorArguments[0];
+        return selector(arg);
+    }
 }

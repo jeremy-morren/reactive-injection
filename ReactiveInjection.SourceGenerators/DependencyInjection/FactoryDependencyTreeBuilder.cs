@@ -42,7 +42,7 @@ internal class FactoryDependencyTreeBuilder
 
         if (duplicates.Count > 0)
         {
-            foreach (var t in duplicates)
+            foreach (var t in duplicates) 
                 _log.DuplicateViewModel(factory, t);
             return false;
         }
@@ -84,11 +84,17 @@ internal class FactoryDependencyTreeBuilder
             //Add Load methods
             foreach (var method in vmType.Methods)
             {
-                if (!method.IsPublic || !method.IsStatic || !method.Name.StartsWith("Load"))
+                if (!method.IsPublic 
+                    || !method.IsStatic 
+                    || !method.Name.StartsWith("Load")
+                    // Ignore methods with [LoaderRoute] attribute
+                    || method.Attributes.Any(AttributeHelpers.IsLoaderRouteAttribute))
                     continue;
-                if (method.ReturnType == null || !method.ReturnType.IsTask())
+                if (method.ReturnType == null 
+                    || !method.ReturnType.IsTask(out var arg) 
+                    || !arg.Equals(vmType))
                 {
-                    _log.IncorrectLoaderSignature(factory, method);
+                    _log.IncorrectLoaderSignature(method);
                     continue;
                 }
                 if (ProcessMethod(factory, 

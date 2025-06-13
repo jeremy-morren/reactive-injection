@@ -12,7 +12,7 @@ internal class ReactiveFactoryGenerator : IIncrementalGenerator
     {
         //We run on all changes of 'Type'
         
-        var returnKinds = context.SyntaxProvider.CreateSyntaxProvider(
+        var types = context.SyntaxProvider.CreateSyntaxProvider(
             static (n, _) => n is TypeDeclarationSyntax,
             static (n, _) =>
             {
@@ -21,15 +21,15 @@ internal class ReactiveFactoryGenerator : IIncrementalGenerator
                 return new TypeSymbol((ITypeSymbol)symbol!, syntax.IsPartial());
             });
         
-        context.RegisterSourceOutput(returnKinds.Collect(), static (context, types) =>
+        //We only care about types with ReactiveFactoryAttribute
+        types = types.Where(
+            t => t != null && t.Attributes.Any(AttributeHelpers.IsReactiveFactoryAttribute));
+        
+        context.RegisterSourceOutput(types.Collect(), static (context, factories) =>
         {
             var log = new CompilationLogProvider(context);
             var builder = new FactoryDependencyTreeBuilder(log);
 
-            var factories = types
-                .WhereNotNull()
-                .Where(t => t.Attributes.Any(AttributeHelpers.IsReactiveFactoryAttribute));
-            
             foreach (var factory in factories)
             {
                 try
@@ -41,7 +41,7 @@ internal class ReactiveFactoryGenerator : IIncrementalGenerator
                 }
                 catch (Exception e)
                 {
-                    new ErrorLogWriter(log).FatalError(factory, e);
+                    new ErrorLogWriter(log).FatalFactoryGenerationError(factory, e);
                 }
             }
         });

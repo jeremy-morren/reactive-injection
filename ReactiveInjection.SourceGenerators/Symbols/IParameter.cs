@@ -2,9 +2,11 @@
 
 internal interface IParameter : IToken
 {
-    public string Name { get; }
+    int Ordinal { get; }
     
-    public IType Type { get; }
+    string Name { get; }
+    
+    IType Type { get; }
 
     IEnumerable<IAttribute> Attributes { get; }
 }

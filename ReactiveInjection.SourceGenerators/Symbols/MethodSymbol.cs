@@ -9,12 +9,13 @@ internal class MethodSymbol : IMethod
     
     public MethodSymbol(IMethodSymbol source)
     {
-        if (source.MethodKind != MethodKind.Ordinary)
-            throw new ArgumentOutOfRangeException(nameof(source));
+        // if (source.MethodKind != MethodKind.Ordinary)
+        //     throw new ArgumentException($"Method {source.MethodKind} is not supported");
         _source = source;
     }
 
     public Location Location => _source.Locations.GetLocation();
+    public IType ContainingType => new TypeSymbol(_source.ContainingType);
     public string Name => _source.Name;
     public bool IsStatic => _source.IsStatic;
     public bool IsPublic => _source.DeclaredAccessibility.IsPublic();

@@ -50,7 +50,7 @@ internal class FactoryImplementationWriter
 
         _writer.WritePartialTypeDefinition(_tree.FactoryType);
 
-        _writer.WriteLine($"private readonly ILogger _logger;");
+        _writer.WriteLine("private readonly ILogger _logger;");
         _writer.WriteLine();
         
         //Create readonly fields for services
@@ -75,7 +75,7 @@ internal class FactoryImplementationWriter
         _writer.WriteAttributes();
         _writer.Write($"public {_tree.FactoryType.Name}(");
         
-        WriteParameters(_tree.Services, (t, i) => $"{t.CSharpName} service{i}");
+        _writer.WriteParameters(_tree.Services, (t, i) => $"{t.CSharpName} service{i}");
 
         if (_tree.Services.Count > 0)
             _writer.WriteRaw(", ");
@@ -124,7 +124,7 @@ internal class FactoryImplementationWriter
         _writer.WriteRawLine(')');
         _writer.WriteLineThenPush('{');
         
-        WriteTryCatch(() =>
+        _writer.WriteTryCatch(() =>
         {
             _writer.Write($"return new {vm.Type.CSharpName}(");
 
@@ -143,22 +143,19 @@ internal class FactoryImplementationWriter
 
     private void WriteLoader(LoaderViewModel vm)
     {
-        //Method is Observable.FromAsync(ct => Load(ct), scheduler: RxApp.MainThreadScheduler)
+        //Method is 
         
-        const string scheduler = "global::ReactiveUI.RxApp.MainThreadScheduler";
-        const string fromAsync = "global::System.Reactive.Linq.Observable.FromAsync";
+        const string task = "global::System.Threading.Tasks.Task";
         
         _writer.WriteAttributes();
-        _writer.Write($"public global::System.IObservable<{vm.Type.CSharpName}> Load{vm.Type.Name}(");
+        _writer.Write($"public async {task}<{vm.Type.CSharpName}> Load{vm.Type.Name}Async(");
         WriteMethodParametersDefinition(vm);
-        
-        _writer.WriteRawLine(')');
+        if (vm.MethodParams.Length > 0)
+            _writer.WriteRaw(", ");
+        _writer.WriteRawLine("CancellationToken ct)");
         _writer.WriteLineThenPush('{');
         
-        _writer.WriteLine($"return {fromAsync}<{vm.Type.CSharpName}>(async (global::System.Threading.CancellationToken ct) =>");
-        _writer.WriteLineThenPush('{');
-        
-        WriteTryCatch(() =>
+        _writer.WriteTryCatch(() =>
         {
             _writer.Write($"return await {vm.Type.CSharpName}.{vm.Method.Name}(");
             WriteMethodParameters(vm.Method.Parameters);
@@ -167,41 +164,39 @@ internal class FactoryImplementationWriter
         () =>
         {
             LogError("Error calling loader {LoaderMethod} for {ViewModel}", 
-                $"\"{vm.Method.Name}\"", $"typeof({vm.Type.CSharpName})");
+                vm.Method.Name.ToStringLiteral(), $"typeof({vm.Type.CSharpName})");
 
             _writer.WriteLine("throw;");
         });
-        
-        _writer.PopThenWriteLine($"}}, scheduler: {scheduler});");
         
         _writer.PopThenWriteLine('}');
     }
 
     private void WriteMethodParametersDefinition(ViewModel vm)
     {
-        WriteParameters(vm.MethodParams, 
+        _writer.WriteParameters(vm.MethodParams, 
             p =>
             {
-                var nullable = p.Type.IsNullable ? "?" : null;
+                var nullable = p.Type is { IsNullable: true, IsReferenceType: true } ? "?" : null;
                 return $"{p.Type.CSharpName}{nullable} {p.Name}";
             });
     }
 
     private void WriteMethodParameters(IEnumerable<IParameter> parameters)
     {
-        WriteParameters(parameters, 
+        _writer.WriteParameters(parameters, 
             param =>
             {
                 //If is wrapping factory type, then use 'this'
                 if (param.Type.Equals(_tree.FactoryType))
                     return "this";
-
+                
                 if (param.Type.IsCancellationToken())
                     return "ct";
                 
                 if (AttributeHelpers.HasFromServicesAttribute(param))
                     return _services[param.Type];
-
+                
                 if (AttributeHelpers.HasSharedStateAttribute(param))
                     return _sharedState[param.Type];
                 
@@ -210,32 +205,10 @@ internal class FactoryImplementationWriter
             });
     }
 
-    private void WriteParameters<T>(IEnumerable<T> parameters, Func<T, string> toString)
-    {
-        _writer.WriteRaw(string.Join(", ", parameters.Select(toString)));
-    }
-    
-    private void WriteParameters<T>(IEnumerable<T> parameters, Func<T, int, string> toString)
-    {
-        _writer.WriteRaw(string.Join(", ", parameters.Select(toString)));
-    }
-
     private void LogError([StructuredMessageTemplate] string message, params string[] args)
     {
         var argList = string.Join(", ", args);
         
-        _writer.WriteLine($"_logger.LogError(ex, \"{message}\", args: new object[]{{{argList}}});");
-    }
-
-    private void WriteTryCatch(Action @try, Action @catch)
-    {
-        _writer.WriteLine("try");
-        _writer.WriteLineThenPush('{');
-        @try();
-        _writer.PopThenWriteLine('}');
-        _writer.WriteLine("catch (Exception ex)");
-        _writer.WriteLineThenPush('{');
-        @catch();
-        _writer.PopThenWriteLine('}');
+        _writer.WriteLine($"_logger.LogError(ex, {message.ToStringLiteral()}, args: new object[]{{{argList}}});");
     }
 }

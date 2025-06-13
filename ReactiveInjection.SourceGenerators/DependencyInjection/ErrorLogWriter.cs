@@ -1,4 +1,5 @@
-﻿using ReactiveInjection.SourceGenerators.Framework;
+﻿using Microsoft.CodeAnalysis;
+using ReactiveInjection.SourceGenerators.Framework;
 using ReactiveInjection.SourceGenerators.Symbols;
 
 namespace ReactiveInjection.SourceGenerators.DependencyInjection;
@@ -9,16 +10,25 @@ internal class ErrorLogWriter
 
     public ErrorLogWriter(IErrorLog log) => _log = log;
 
-    public void FatalError(IType factory, Exception e)
+    public void FatalFactoryGenerationError(IType factory, Exception e)
     {
         _log.WriteError(factory.Location,
             "RI1000",
             "Unexpected error generating ViewModel factory implementation",
             "An unexpected error occurred generating the view model factory '{0}': {1}: {2}",
-            factory,
-            e.GetType(),
-            e.Message);
+            factory, e.GetType(), e.Message);
     }
+    
+    public void FatalRoutingGenerationError(Exception e)
+    {
+        _log.WriteError(Location.None,
+            "RI1001",
+            "Unexpected error generating reactive routing manager",
+            "An unexpected error occurred generating the reactive routing manager {1}: {2}",
+            e.GetType(), e.Message);
+    }
+    
+    #region Factory
     
     public void FactoryIsNotPartial(IType factory)
     {
@@ -103,13 +113,104 @@ internal class ErrorLogWriter
             "Shared state '{0}' on ViewModel '{1}' has no parameterless constructor",
             parameter.Type, viewModel);
     }
-
-    public void IncorrectLoaderSignature(IType viewModel, IMethod method)
+    
+    #endregion
+    
+    #region Loader
+    
+    public void IncorrectLoaderSignature(IMethod method)
     {
         _log.WriteError(method.Location,
             "RI1040",
             "Incorrect loader method signature",
-            "Loader '{0}' on ViewModel '{1}' must return Task<T> where T is the ViewModel type",
-            method, viewModel);
+            "Loader '{0}' must return Task<T> where T is the ViewModel type",
+            method);
     }
+    
+    #endregion
+    
+    #region Routing
+
+    public void LoaderMustBeStatic(IMethod method)
+    {
+        _log.WriteError(method.Location,
+            "RI1050",
+            "Loader must be static",
+            "View model loader {0} must be declared as static",
+            method);
+    }
+    
+    public void IncorrectRouteHandlerSignature(IMethod method)
+    {
+        _log.WriteError(method.Location,
+            "RI1051",
+            "Incorrect route handler method signature",
+            "Route handler '{0}' must return T or Task<T> where T is the ViewModel type",
+            method);
+    }
+    
+    public void DuplicateRouteParameters(IAttribute attribute, string parameter)
+    {
+        _log.WriteError(attribute.Location,
+            "RI1052",
+            "Duplicate route parameter",
+            "Parameter '{0}' is defined multiple times in route attribute",
+            parameter);
+    }
+    
+    public void OptionalRouteParameterIsNotLastSegment(IAttribute attribute, string parameter)
+    {
+        _log.WriteError(attribute.Location,
+            "RI1053",
+            "Optional parameter is not last segment",
+            "Optional route parameter '{0}' must be the last segment in the route",
+            parameter);
+    }
+    
+    public void UnknownRouteHandlerParameterType(IParameter parameter)
+    {
+        _log.WriteError(parameter.Location,
+            "RI1054",
+            "Unknown route handler parameter type",
+            "Route parameter '{0}' has an unknown type",
+            parameter);
+    }
+    
+    public void OptionalRouteParameterNotNullable(IParameter parameter)
+    {
+        _log.WriteError(parameter.Location,
+            "RI1055",
+            "Optional route parameter must be nullable",
+            "Route parameter '{0}' is optional but not nullable",
+            parameter);
+    }
+    
+    public void RequiredRouteParameterNullable(IParameter parameter)
+    {
+        _log.WriteError(parameter.Location,
+            "RI1056",
+            "Required route parameter cannot be nullable",
+            "Parameter '{0}' is required but has nullable type",
+            parameter);
+    }
+    
+    public void RouteHandlerParameterNotProvided(IParameter parameter)
+    {
+        _log.WriteError(parameter.Location,
+            "RI1057",
+            "Unknown route handler parameter",
+            "Parameter '{0}' is not provided by the route",
+            parameter);
+    }
+    
+    public void RouteSegmentParameterNotFoundOnMethod(IMethod method, string parameter)
+    {
+        _log.WriteError(method.Location,
+            "RI1058",
+            "Route segment parameter not found on method",
+            "Parameter {0} not found on method {1}",
+            parameter, method);
+    }
+    
+    #endregion
 }
